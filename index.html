@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BMW M-Series Website</title>
+  <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/BMW_M_logo.svg/2560px-BMW_M_logo.svg.png" width="32px">
+  <link rel="stylesheet" href="main.css"> 
+  <style>
+    /* Small inline style to fix a class conflict found during review */
+    .inventory-info .price {
+      font-weight: 700;
+      color: #003580; /* Changed price color to M-Blue for better visibility on white card */
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/BMW_M_logo.svg/2560px-BMW_M_logo.svg.png" width="75px" alt="BMW M Logo">
+    </div>
+    
+    <nav class="main-nav">
+      <ul>
+        <li><a href="#inventory">Inventory</a></li>
+        <li><a href="#about">About M</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    
+    <nav class="secondary-nav">
+      <ul>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Experience the BMW M Division</h1>
+        <p>The ultimate blend of high-performance racing technology and everyday luxury. Power, precision, and passion.</p>
+        <button class="btn-primary" onclick="location.href='#inventory'">View M Inventory</button>
+      </div>
+    </section>
+    
+    <section id="inventory" class="inventory">
+      <h2>M-Series Featured Inventory</h2>
+      <div class="inventory-list">
+        
+        <div class="inventory-card">
+          <img src="https://bmw.scene7.com/is/image/BMW/g87_dynamics_fb?qlt=80&wid=1024&fmt=webp" alt="BMW M2 Coupe" />
+          <div class="inventory-info">
+            <h3>BMW M2 Coupe (G87)</h3>
+            <p class="price">₹1.03 Crore*</p>
+            <p class="desc">Compact M power. A powerful and agile sports car built for the purist driving experience.</p>
+            <div class="card-actions">
+              <a class="small-btn" href="m2-coupe-details.html">Details</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="inventory-card">
+          <img src="https://bmw.scene7.com/is/image/BMW/g80_stage_dsk_fb?qlt=80&wid=1024&fmt=webp" alt="BMW M3 Sedan" />
+          <div class="inventory-info">
+            <h3>BMW M3 Competition Sedan</h3>
+            <p class="price">₹1.47 Crore*</p>
+            <p class="desc">The iconic sports sedan combining racetrack performance with luxurious daily practicality.</p>
+            <div class="card-actions">
+              <a class="small-btn" href="m3-sedan-details.html">Details</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="inventory-card">
+          <img src="https://bmw.scene7.com/is/image/BMW/g82_stage_dsk_fb?qlt=80&wid=1024&fmt=webp" alt="BMW M4 Coupe" />
+          <div class="inventory-info">
+            <h3>BMW M4 Competition Coupe</h3>
+            <p class="price">₹1.52 Crore*</p>
+            <p class="desc">Available in coupe body style, featuring aggressive styling and a twin-turbo engine.</p>
+            <div class="card-actions">
+              <a class="small-btn" href="m4-coupe-details.html">Details</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="inventory-card">
+          <img src="https://bmw.scene7.com/is/image/BMW/g90_stage_dsk_fb?qlt=80&wid=1024&fmt=webp" alt="BMW M5 Sedan" />
+          <div class="inventory-info">
+            <h3>BMW M5 Sedan</h3>
+            <p class="price">₹2.01 Crore*</p>
+            <p class="desc">A high-performance luxury sedan with exceptional power and refined executive comfort.</p>
+            <div class="card-actions">
+              <a class="small-btn" href="m5-sedan-details.html">Details</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="inventory-card">
+          <img src="https://www.bmw-infinitycars.in/sites/default/files/2022-09/M8_1280x610%20%281%29_0.jpg" alt="BMW M8 Coupe" />
+          <div class="inventory-info">
+            <h3>BMW M8 Competition Coupe</h3>
+            <p class="price">₹2.44 Crore*</p>
+            <p class="desc">The flagship M-Series model. Top-tier luxury and breathtaking V8 performance.</p>
+            <div class="card-actions">
+              <a class="small-btn" href="m8-coupe-details.html">Details</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="inventory-card">
+          <img src="https://www.bmw.in/content/dam/bmw/common/all-models/m-series/xm/2022/Highlights/bmw-x-series-xm-phev-mc-electric-driving-hero-desktop.jpg.asset.1661934105350.jpg" alt="BMW XM SUV" />
+          <div class="inventory-info">
+            <h3>BMW XM (PHEV)</h3>
+            <p class="price">₹2.60 Crore*</p>
+            <p class="desc">A revolutionary high-performance hybrid SUV from the M division. Electrified power.</p>
+            <div class="card-actions">
+              <a class="small-btn" href="xm-phev-details.html">Details</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <p style="text-align: center; font-size: 0.85rem; color: #aaa; margin-top: 30px;">*Prices listed are ex-showroom (indicative) and subject to change based on location and options.</p>
+    </section>
+  </main>
+
+  <section id="about" class="about">
+    <h2>About the M Division</h2>
+    <p>
+      The BMW M GmbH (formerly BMW Motorsport GmbH) is a subsidiary of BMW AG that was founded in 1972 to facilitate BMW's racing program. Over time, it transitioned to producing high-performance versions of various BMW models. The <strong>M</strong> stands for <strong>Motorsport</strong>, signifying the division's commitment to precision engineering, superior handling, and powerful engines. Every vehicle bearing the M badge is rigorously tested on the world's most demanding circuits, including the Nürburgring Nordschleife, to ensure it delivers a truly exhilarating and competitive driving experience.
+    </p>
+  </section>
+
+  <footer id="contact">
+    <p>Contact the M Specialist Team: <a href="mailto:info@bmw-m.com">info@bmw-m.com</a> | Inquiries: +91 98765 43210</p>
+    <p>© 2025 BMW M-Series Unofficial Showcase. All rights reserved.</p>
+  </footer>
+</body>
+</html>
