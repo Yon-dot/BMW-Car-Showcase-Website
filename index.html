@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>BMW M Series | MX Showcase</title>
-  <meta name="description" content="Experience the BMW M Division's finest — a curated showcase of high-performance M-Series vehicles with detailed specifications and pricing."/>
+  <title>Unofficial BMW M Series | MX Showcase</title>
+  <meta name="description" content="An unofficial showcase of the BMW M Division's finest high-performance M-Series vehicles. This site is a personal project and not affiliated with BMW AG."/>
   <link rel="icon" type="image/png" href="https://www.carlogos.org/car-logos/bmw-m-logo.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -112,11 +112,10 @@
     #wish-btn { position:relative; }
     #wish-count { position:absolute; top:-8px; right:-8px; background:var(--m-red); color:#fff; font-size:.65rem; font-weight:700; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; opacity:0; transform:scale(.4); transition:opacity .3s, transform .5s var(--ease-spring); box-shadow: 0 4px 12px rgba(230,28,36,0.5); }
     #wish-count.show { opacity:1; transform:scale(1); }
-    .btn-gold, .hdr-login, .login-submit, .detail-btn.primary { position: relative; overflow: hidden; background:linear-gradient(135deg, var(--gold) 0%, var(--gold-lt) 100%); color:var(--black); border:none; transition:all .3s var(--ease-out-expo); z-index: 1; }
-    .btn-gold::before, .hdr-login::before, .login-submit::before, .detail-btn.primary::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); transform: skewX(-20deg); transition: none; z-index: -1; }
-    .btn-gold:hover::before, .hdr-login:hover::before, .login-submit:hover::before, .detail-btn.primary:hover::before { left: 150%; transition: left 0.6s ease; }
-    .hdr-login { font-family:var(--ff-cond); font-size:.78rem; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; padding:10px 24px; border-radius:6px; }
-    .hdr-login:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(201,168,76,.4); }
+    .btn-gold, .detail-btn.primary { position: relative; overflow: hidden; background:linear-gradient(135deg, var(--gold) 0%, var(--gold-lt) 100%); color:var(--black); border:none; transition:all .3s var(--ease-out-expo); z-index: 1; }
+    .btn-gold::before, .detail-btn.primary::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); transform: skewX(-20deg); transition: none; z-index: -1; }
+    .btn-gold:hover::before, .detail-btn.primary:hover::before { left: 150%; transition: left 0.6s ease; }
+
     #hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; padding:4px; }
     #hamburger span { display:block; width:22px; height:1.5px; background:var(--white); transition:.3s; }
     #hamburger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
@@ -419,29 +418,7 @@
     .footer-legal a { font-family:var(--ff-cond); font-size:.7rem; letter-spacing:1.5px; color:rgba(255,255,255,.3); text-transform:uppercase; font-weight: 700; transition:color .3s; }
     .footer-legal a:hover { color:rgba(255,255,255,0.7); }
 
-    /* LOGIN MODAL */
-    #login-page { display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,.85); backdrop-filter:blur(24px) saturate(120%); align-items:center; justify-content:center; }
-    #login-page.open { display:flex; }
-    .login-container { background: linear-gradient(160deg, #121218 0%, #0a0a0e 100%); border:1px solid rgba(255,255,255,0.1); padding:56px 48px; width:420px; max-width:95vw; border-radius:20px; animation:loginPop .5s var(--ease-out-expo); box-shadow:0 50px 100px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.05); }
-    @keyframes loginPop { from{opacity:0;transform:scale(.92) translateY(30px)} to{opacity:1;transform:none} }
-    .login-logo-wrap { text-align:center; margin-bottom:40px; }
-    .login-logo-wrap img { width:60px; margin:0 auto 20px; filter:drop-shadow(0 0 20px rgba(201,168,76,.6)); }
-    .login-logo-wrap h2 { font-family:var(--ff-display); font-size:2.6rem; color:var(--white); letter-spacing:2px; line-height:1; }
-    .login-logo-wrap p { font-family:var(--ff-cond); font-size:.8rem; letter-spacing:3px; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-top:8px; font-weight: 700; }
-    .form-group { margin-bottom:24px; }
-    .form-group label { display:block; font-family:var(--ff-cond); font-size:.75rem; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:10px; font-weight: 700; }
-    .form-group input { width:100%; padding:14px 18px; border-radius:8px; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.03); color:var(--white); font-family:var(--ff-body); font-size:1.05rem; outline:none; transition:all .3s ease; }
-    .form-group input:focus { border-color:var(--gold); background: rgba(0,0,0,0.6); box-shadow:0 0 0 4px rgba(201,168,76,.2); }
-    .form-group input.error { border-color:var(--m-red); }
-    .field-error { font-size:.8rem; color:var(--m-red); margin-top:8px; display:none; font-family:var(--ff-cond); letter-spacing:1px; font-weight: 600; }
-    .field-error.show { display:block; }
-    .login-links { margin-top:24px; text-align:center; font-family:var(--ff-cond); font-size:.85rem; letter-spacing:1px; color:rgba(255,255,255,0.4); font-weight: 600; }
-    .login-links a { color:var(--gold); transition:color .3s; }
-    .login-links a:hover { color:var(--gold-lt); }
-    #login-close-btn { display:block; margin:24px auto 0; background:none; border:none; color:rgba(255,255,255,0.4); font-family:var(--ff-cond); font-size:.8rem; letter-spacing:1.5px; text-decoration:underline; text-underline-offset:4px; font-weight: 700; transition:color .3s; }
-    #login-close-btn:hover { color:var(--white); }
-    #login-spinner { display:none; width:22px; height:22px; border:3px solid rgba(0,0,0,.2); border-top-color:var(--black); border-radius:50%; animation:spin .7s linear infinite; margin:0 auto; }
-    @keyframes spin { to{transform:rotate(360deg)} }
+
 
     /* SCROLL REVEAL */
     .reveal { opacity:0; transform:translateY(40px); transition:opacity .8s ease, transform .8s var(--ease-out-expo); }
@@ -799,7 +776,7 @@
       <p class="footer-col-title">Contact</p>
       <div class="footer-contact-item">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        <a href="mailto:info@bmw-m.com">info@bmw-m.com</a>
+        <a href="mailto:hello@unofficialshowcase.local">hello@unofficialshowcase.local</a>
       </div>
       <div class="footer-contact-item">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.53a2 2 0 0 1 1.94-2.1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6 6l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
