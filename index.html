@@ -1,144 +1,1287 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BMW M-Series Website</title>
-  <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/BMW_M_logo.svg/2560px-BMW_M_logo.svg.png" width="32px">
-  <link rel="stylesheet" href="main.css"> 
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>BMW M Series | MX Showcase</title>
+  <meta name="description" content="Experience the BMW M Division's finest — a curated showcase of high-performance M-Series vehicles with detailed specifications and pricing."/>
+  <link rel="icon" type="image/png" href="https://www.carlogos.org/car-logos/bmw-m-logo.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+
   <style>
-    /* Small inline style to fix a class conflict found during review */
-    .inventory-info .price {
-      font-weight: 700;
-      color: #003580; /* Changed price color to M-Blue for better visibility on white card */
-      font-size: 1.2rem;
-      margin-bottom: 15px;
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    :root {
+      --black:     #030305;
+      --surface:   #0a0a0e;
+      --surface2:  #121218;
+      --surface3:  #1a1a22;
+      --border:    rgba(255,255,255,.06);
+      --border2:   rgba(255,255,255,.12);
+      --white:     #f4f4ef;
+      --muted:     #8a8a88;
+      --muted2:    #bbbbbb;
+      --gold:      #c9a84c;
+      --gold-lt:   #f0cc7a;
+      --gold-dim:  rgba(201,168,76,.15);
+      --m-blue-lt: #78a2e5;
+      --m-blue-dk: #2b3990;
+      --m-red:     #e61c24;
+      --phev:      #7c5cbf;
+      --phev-lt:   #a88def;
+
+      --ff-display: 'Bebas Neue', sans-serif;
+      --ff-cond:    'Barlow Condensed', sans-serif;
+      --ff-body:    'Barlow', sans-serif;
+
+      --ease-out-expo: cubic-bezier(.16,1,.3,1);
+      --ease-in-out:   cubic-bezier(.4,0,.2,1);
+      --ease-spring:   cubic-bezier(0.175, 0.885, 0.32, 1.1);
     }
+
+    html { scroll-behavior:smooth; }
+    body {
+      font-family: var(--ff-body);
+      background: var(--black);
+      color: var(--white);
+      line-height:1.6;
+      overflow-x:hidden;
+      cursor: default;
+    }
+
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: #222; border-radius: 5px; border: 2px solid var(--black); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+    ::selection { background: var(--gold); color: var(--black); }
+
+    button { font-family: inherit; cursor:pointer; }
+    a { text-decoration:none; }
+    img { display:block; }
+
+    /* PAGE LOADER */
+    #page-loader {
+      position:fixed; inset:0; z-index:99999;
+      background:var(--black);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      gap:28px;
+      transition:opacity .8s ease .2s;
+    }
+    #page-loader.out { opacity:0; pointer-events:none; }
+    .loader-logo { width:72px; animation:loaderPulse .9s ease-in-out infinite alternate; filter: drop-shadow(0 0 25px rgba(201,168,76,.5)); }
+    @keyframes loaderPulse { from{opacity:.4;transform:scale(.95)} to{opacity:1;transform:scale(1.05)} }
+    .loader-line { width:220px; height:1px; background:var(--border); position:relative; overflow:hidden; }
+    .loader-line::after { content:''; position:absolute; inset-block:0; left:-100%; width:100%; background:linear-gradient(90deg,transparent,var(--gold),transparent); animation:lineSweep 1.3s ease-in-out infinite; }
+    @keyframes lineSweep { to{ left:200%; } }
+    .loader-label { font-family:var(--ff-cond); font-size:.75rem; letter-spacing:8px; color:var(--muted); text-transform:uppercase; }
+
+    /* TOAST */
+    #toast-container { position:fixed; bottom:32px; right:32px; display:flex; flex-direction:column; gap:10px; z-index:9999; }
+    .toast { display:flex; align-items:center; gap:12px; padding:16px 20px; border-radius:8px; font-family:var(--ff-cond); font-size:.95rem; letter-spacing:.5px; color:#fff; min-width:280px; max-width:360px; border-left:4px solid transparent; backdrop-filter:blur(20px); animation:toastIn .4s var(--ease-out-expo) forwards; box-shadow: 0 10px 40px rgba(0,0,0,.6); }
+    .toast.out { animation:toastOut .3s ease forwards; }
+    .toast.success { background:rgba(15,40,20,.95); border-color:#3a9e58; }
+    .toast.info    { background:rgba(10,25,60,.95);  border-color:var(--m-blue-lt); }
+    .toast.error   { background:rgba(50,8,8,.95);    border-color:var(--m-red); }
+    .toast.warning { background:rgba(55,38,4,.95);   border-color:var(--gold); }
+    @keyframes toastIn  { from{transform:translateX(120%);opacity:0} to{transform:none;opacity:1} }
+    @keyframes toastOut { from{transform:none;opacity:1} to{transform:translateX(120%);opacity:0} }
+
+    /* BACK TO TOP */
+    #back-to-top { position:fixed; bottom:32px; left:32px; z-index:998; width:48px; height:48px; border-radius:8px; border:1px solid var(--border2); background:var(--surface2); color:var(--gold); font-size:1.2rem; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:all .4s var(--ease-out-expo); box-shadow: 0 4px 20px rgba(0,0,0,.5); }
+    #back-to-top.visible { opacity:1; pointer-events:all; }
+    #back-to-top:hover { border-color:var(--gold); transform:translateY(-5px); box-shadow: 0 12px 30px rgba(201,168,76,.25); }
+
+    /* HEADER */
+    .m-stripe-top { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 1001; background: linear-gradient(90deg, var(--m-blue-lt) 0%, var(--m-blue-lt) 33.33%, var(--m-blue-dk) 33.33%, var(--m-blue-dk) 66.66%, var(--m-red) 66.66%, var(--m-red) 100%); }
+    header { position:sticky; top:3px; z-index:1000; padding:24px 56px; display:flex; align-items:center; gap:36px; background:rgba(3,3,5,.4); backdrop-filter:blur(32px) saturate(180%); -webkit-backdrop-filter:blur(32px) saturate(180%); border-bottom:1px solid transparent; transition:all .5s var(--ease-out-expo); }
+    header.shrunk { padding:14px 56px; border-color:rgba(255,255,255,0.08); background:rgba(5,5,8,.85); box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+    .logo img { width:56px; transition:transform .4s var(--ease-out-expo), filter .4s; }
+    .logo img:hover { transform:scale(1.15); filter:drop-shadow(0 0 18px rgba(201,168,76,.8)); }
+    .header-stripe { width:1px; height:32px; background:linear-gradient(180deg,transparent,var(--border2),transparent); flex-shrink:0; }
+    nav.main-nav ul { list-style:none; display:flex; gap:8px; }
+    nav.main-nav ul li a { font-family:var(--ff-cond); font-size:.8rem; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); padding:8px 16px; border-radius:6px; transition:color .3s, background .3s; position:relative; overflow: hidden; }
+    nav.main-nav ul li a::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); transform:scaleX(0); transform-origin:right; transition:transform .4s var(--ease-out-expo); }
+    nav.main-nav ul li a:hover, nav.main-nav ul li a.active { color:var(--white); background: rgba(255,255,255,0.03); }
+    nav.main-nav ul li a:hover::after, nav.main-nav ul li a.active::after { transform:scaleX(1); transform-origin:left; }
+    .header-end { margin-left:auto; display:flex; align-items:center; gap:16px; }
+    .hdr-btn { font-family:var(--ff-cond); font-size:.78rem; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; padding:10px 20px; border-radius:6px; border:1px solid rgba(255,255,255,0.15); color:var(--muted2); background:rgba(255,255,255,.02); transition:all .3s ease; position:relative; }
+    .hdr-btn:hover { border-color:var(--gold); color:var(--gold); background:rgba(201,168,76,0.12); box-shadow: 0 0 20px rgba(201,168,76,0.2); }
+    #wish-btn { position:relative; }
+    #wish-count { position:absolute; top:-8px; right:-8px; background:var(--m-red); color:#fff; font-size:.65rem; font-weight:700; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; opacity:0; transform:scale(.4); transition:opacity .3s, transform .5s var(--ease-spring); box-shadow: 0 4px 12px rgba(230,28,36,0.5); }
+    #wish-count.show { opacity:1; transform:scale(1); }
+    .btn-gold, .hdr-login, .login-submit, .detail-btn.primary { position: relative; overflow: hidden; background:linear-gradient(135deg, var(--gold) 0%, var(--gold-lt) 100%); color:var(--black); border:none; transition:all .3s var(--ease-out-expo); z-index: 1; }
+    .btn-gold::before, .hdr-login::before, .login-submit::before, .detail-btn.primary::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); transform: skewX(-20deg); transition: none; z-index: -1; }
+    .btn-gold:hover::before, .hdr-login:hover::before, .login-submit:hover::before, .detail-btn.primary:hover::before { left: 150%; transition: left 0.6s ease; }
+    .hdr-login { font-family:var(--ff-cond); font-size:.78rem; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; padding:10px 24px; border-radius:6px; }
+    .hdr-login:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(201,168,76,.4); }
+    #hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; padding:4px; }
+    #hamburger span { display:block; width:22px; height:1.5px; background:var(--white); transition:.3s; }
+    #hamburger.open span:nth-child(1) { transform:translateY(6.5px) rotate(45deg); }
+    #hamburger.open span:nth-child(2) { opacity:0; }
+    #hamburger.open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
+
+    /* HERO */
+    .hero { position:relative; height:100vh; min-height:680px; display:flex; align-items:flex-end; overflow:hidden; }
+    .hero-bg { position:absolute; inset:0; background:url('https://i.pinimg.com/originals/d9/4a/64/d94a643f26453333ad4354daad504b9c.jpg') center/cover no-repeat; transform:scale(1.04); animation:heroZoom 18s ease-in-out infinite alternate; }
+    @keyframes heroZoom { from { transform:scale(1.04) translate(0,0); } to { transform:scale(1.08) translate(-1%,-0.5%); } }
+    .hero-bg::after { content:''; position:absolute; inset:0; background: radial-gradient(circle at 80% 20%, transparent 0%, rgba(3,3,5,0.7) 60%), linear-gradient(160deg,rgba(3,3,5,.2) 0%,rgba(3,3,5,1) 85%), linear-gradient(0deg, rgba(3,3,5,1) 0%, transparent 35%); }
+    .hero-grain { position:absolute; inset:0; pointer-events:none; z-index:1; opacity:.04; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
+    .hero-content { position:relative; z-index:2; padding:0 80px 100px; max-width:880px; animation:heroIn 1s var(--ease-out-expo) .4s both; }
+    @keyframes heroIn { from{opacity:0;transform:translateY(60px)} to{opacity:1;transform:none} }
+    .hero-eyebrow { font-family:var(--ff-cond); font-size:.75rem; letter-spacing:6px; text-transform:uppercase; color:var(--gold); margin-bottom:24px; display:flex; align-items:center; gap:16px; font-weight: 700; }
+    .hero-eyebrow::before { content:''; display:block; width:48px; height:2px; background:linear-gradient(90deg,transparent,var(--gold)); }
+    .hero-content h1 { font-family:var(--ff-display); font-size:clamp(5rem, 10vw, 9.5rem); line-height:.88; letter-spacing:2px; color:var(--white); margin-bottom:32px; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .hero-content h1 em { font-style:normal; background:linear-gradient(135deg,var(--gold) 20%,var(--gold-lt) 80%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .hero-content p { font-size:1.15rem; color:rgba(244,244,239,.7); font-weight:300; max-width:500px; margin-bottom:48px; line-height:1.8; letter-spacing: 0.5px; }
+    .hero-actions { display:flex; align-items:center; gap:20px; }
+    .btn-gold { font-family:var(--ff-cond); font-size:.85rem; letter-spacing:2px; text-transform:uppercase; font-weight:700; padding:16px 40px; border-radius:6px; box-shadow:0 6px 25px rgba(201,168,76,.3); }
+    .btn-gold:hover { transform:translateY(-3px); box-shadow:0 12px 35px rgba(201,168,76,.5); }
+    .btn-ghost { font-family:var(--ff-cond); font-size:.85rem; letter-spacing:2px; text-transform:uppercase; font-weight:700; padding:15px 40px; border-radius:6px; background:rgba(255,255,255,.05); color:var(--white); border:1px solid rgba(255,255,255,.2); transition:all .3s var(--ease-out-expo); backdrop-filter:blur(12px); }
+    .btn-ghost:hover { border-color:var(--white); background:rgba(255,255,255,.15); box-shadow: 0 8px 25px rgba(255,255,255,0.1); transform:translateY(-3px); }
+    .hero-stats { position:absolute; bottom:100px; right:80px; z-index:2; display:flex; gap:0; animation:heroIn 1s var(--ease-out-expo) .7s both; }
+    .hero-stat { text-align:right; padding:0 0 0 56px; border-left:1px solid rgba(255,255,255,0.1); position:relative; }
+    .hero-stat:first-child { border-left:none; padding-left:0; }
+    .hero-stat strong { display:block; font-family:var(--ff-display); font-size:3rem; color:var(--white); line-height:1; text-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+    .hero-stat span { font-family:var(--ff-cond); font-size:.7rem; letter-spacing:4px; color:rgba(255,255,255,0.5); text-transform:uppercase; margin-top:6px; display:block; font-weight: 700; }
+    .scroll-cue { position:absolute; bottom:32px; left:50%; transform:translateX(-50%); z-index:2; display:flex; flex-direction:column; align-items:center; gap:12px; }
+    .scroll-cue span { font-family:var(--ff-cond); font-size:.65rem; letter-spacing:5px; color:rgba(255,255,255,0.4); text-transform:uppercase; font-weight: 700; }
+    .scroll-cue-line { width:2px; height:50px; background:rgba(255,255,255,.1); position:relative; overflow:hidden; border-radius: 2px; }
+    .scroll-cue-line::after { content:''; position:absolute; top:-100%; left:0; right:0; height:100%; background:linear-gradient(180deg,transparent,var(--gold)); animation:scrollDrop 2s ease-in-out infinite; }
+    @keyframes scrollDrop { to{ top:200%; } }
+
+    /* MARQUEE */
+    .marquee-section { overflow:hidden; border-top:1px solid rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.05); background: linear-gradient(90deg, var(--surface) 0%, #111116 50%, var(--surface) 100%); padding:0; }
+    .marquee-row { display:flex; gap:0; overflow:hidden; }
+    .marquee-row:first-child { border-bottom:1px solid rgba(255,255,255,0.03); }
+    .marquee-track { display:flex; white-space:nowrap; animation:marqueeScroll 35s linear infinite; }
+    .marquee-track.reverse { animation-direction:reverse; animation-duration:28s; }
+    .marquee-track span { font-family:var(--ff-display); font-size:2.8rem; color:rgba(255,255,255,.05); padding:16px 40px; display:inline-block; user-select:none; letter-spacing:5px; transition: color 0.3s; }
+    .marquee-track span:hover { color: rgba(255,255,255,0.15); }
+    .marquee-track span.accent { color:var(--gold); opacity:.6; font-family: var(--ff-body); font-size: 1.5rem; vertical-align: middle;}
+    .marquee-track span.phev { color:var(--phev-lt); opacity:.7; }
+    @keyframes marqueeScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* FILTER BAR */
+    .filter-bar { background:rgba(10,10,14,0.75); backdrop-filter: blur(24px) saturate(150%); border-bottom:1px solid rgba(255,255,255,0.05); padding:20px 56px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; position:sticky; top:3px; z-index:100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .filter-bar.has-header { top:75px; }
+    .search-wrap { flex:1; min-width:240px; position:relative; }
+    .search-wrap svg { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; width: 18px; height: 18px; }
+    .filter-bar input[type="text"] { width:100%; padding:12px 20px 12px 46px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.02); color:var(--white); font-family:var(--ff-body); font-size:.95rem; outline:none; transition:all .3s ease; }
+    .filter-bar input:focus { border-color:var(--gold); background: rgba(0,0,0,0.6); box-shadow:0 0 0 4px rgba(201,168,76,.15); }
+    .filter-bar input::placeholder { color:rgba(255,255,255,0.3); font-weight: 300; }
+    .filter-pill { display:flex; align-items:center; gap:10px; padding:12px 20px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.02); transition: background 0.3s; }
+    .filter-pill:hover { background: rgba(255,255,255,0.05); }
+    .filter-pill label { font-family:var(--ff-cond); font-size:.75rem; letter-spacing:2px; color:rgba(255,255,255,0.5); text-transform:uppercase; white-space:nowrap; font-weight: 700; }
+    .filter-bar select { padding:0; border:none; background:transparent; color:var(--white); font-family:var(--ff-cond); font-size:.9rem; letter-spacing:.5px; font-weight: 700; outline:none; cursor:pointer; appearance:none; padding-right:24px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23bbbbbb' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 0 center; }
+    .results-count { font-family:var(--ff-cond); font-size:.8rem; letter-spacing:2px; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-left:auto; white-space:nowrap; font-weight: 700; }
+    .results-count span { color:var(--gold); font-size: 1rem;}
+    #no-results { text-align:center; padding:100px 20px; font-family:var(--ff-cond); font-size:1.2rem; letter-spacing:2px; color:var(--muted); display:none; text-transform: uppercase; }
+
+    /* INVENTORY SECTION */
+    .inventory { padding:100px 56px; max-width:1440px; margin:0 auto; }
+    .section-header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:64px; padding-bottom:24px; border-bottom:1px solid rgba(255,255,255,0.05); }
+    .section-eyebrow { font-family:var(--ff-cond); font-size:.75rem; letter-spacing:5px; color:var(--gold); text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:14px; font-weight: 700; }
+    .section-eyebrow::before { content:''; display:block; width:32px; height:2px; background:var(--gold); }
+    .section-header h2 { font-family:var(--ff-display); font-size:clamp(3rem,5vw,4.5rem); line-height:.9; color:var(--white); text-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .section-count { font-family:var(--ff-display); font-size:6rem; color:rgba(255,255,255,.03); line-height:1; letter-spacing:-4px; }
+
+    /* ── INVENTORY CARDS ── */
+    .inventory-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(360px,1fr)); gap:32px; }
+
+    .inventory-card {
+      background: linear-gradient(160deg, rgba(24,24,30,0.9) 0%, rgba(12,12,16,0.95) 100%);
+      display:flex; flex-direction:column;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:14px;
+      backdrop-filter: blur(12px);
+      transition:
+        border-color .4s ease,
+        transform .5s var(--ease-out-expo),
+        box-shadow .5s ease;
+      cursor:default;
+      position:relative;
+      opacity: 0; transform: translateY(40px) scale(0.96);
+    }
+    .inventory-card.visible { animation: cardCascade 0.8s var(--ease-out-expo) forwards; }
+    @keyframes cardCascade { to { opacity:1; transform:none; } }
+
+    .inventory-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 10;
+      background: linear-gradient(90deg, var(--m-blue-lt), var(--m-blue-dk), var(--m-red));
+      opacity: 0.5; transition: opacity 0.4s, height 0.4s;
+    }
+    .inventory-card:hover { border-color:rgba(201,168,76,.35); transform:translateY(-8px); box-shadow: 0 30px 60px rgba(0,0,0,.85), 0 0 0 1px rgba(201,168,76,.1), 0 0 40px rgba(201,168,76,.08); z-index:1; }
+    .inventory-card:hover::before { opacity: 1; height: 3px; }
+    .inventory-card.hidden { display:none; }
+
+    /* Image area — no pointer/click behavior, just display */
+    .card-img-wrap { position:relative; overflow:hidden; }
+    .inventory-card img {
+      width:100%; height:260px; object-fit:cover;
+      transition:transform .8s var(--ease-out-expo), filter .5s ease;
+      filter:brightness(.85) saturate(.9);
+      pointer-events: none;
+    }
+    .inventory-card:hover img { transform:scale(1.06); filter:brightness(.75) saturate(1.05); }
+
+    .card-img-wrap::after {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(0deg,rgba(12,12,16,1) 0%,rgba(12,12,16,.3) 50%,transparent 100%);
+      pointer-events:none;
+    }
+
+    /* Wishlist FAB */
+    .wish-fab {
+      position: absolute; top: 16px; right: 16px; z-index: 10;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(20,20,26,0.65); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.75);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.35s var(--ease-spring);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .wish-fab svg { width: 18px; height: 18px; transition: fill 0.3s; stroke-width: 2.5;}
+    .wish-fab:hover { transform: scale(1.12); background: rgba(20,20,26,0.95); border-color: var(--m-red); color: var(--m-red); box-shadow: 0 6px 20px rgba(230,28,36,0.3); }
+    .wish-fab.wished { background: var(--m-red); border-color: var(--m-red); color: #fff; box-shadow: 0 4px 16px rgba(230,28,36,0.5); }
+    .wish-fab.wished svg { fill: #fff; stroke: #fff;}
+
+    /* Card badge */
+    .card-badge {
+      position:absolute; bottom:16px; right:16px; z-index:1;
+      font-family:var(--ff-cond); font-size:.65rem; font-weight:700;
+      letter-spacing:2.5px; text-transform:uppercase;
+      padding:6px 14px;
+      background:rgba(20,20,26,0.75);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(201,168,76,.4);
+      color:var(--gold-lt); border-radius:6px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    }
+    .card-badge.phev-badge { border-color:rgba(124,92,191,.5); color:var(--phev-lt); }
+
+    /* Card body */
+    .inventory-info { padding:24px 24px 28px; flex-grow:1; display:flex; flex-direction:column; }
+    .card-model-tag { font-family:var(--ff-cond); font-size:.7rem; letter-spacing:3px; color:rgba(255,255,255,0.35); text-transform:uppercase; margin-bottom:10px; font-weight: 700; }
+    .inventory-info h3 { font-family:var(--ff-cond); font-size:1.45rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--white); margin-bottom:12px; line-height:1.2; }
+    .inventory-info .desc { font-size:.9rem; color:rgba(255,255,255,0.55); font-weight:300; margin-bottom:22px; flex-grow:1; line-height:1.7; }
+
+    /* Spec chips */
+    .card-specs-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:22px; }
+    .spec-chip { font-family:var(--ff-cond); font-size:.68rem; letter-spacing:1.5px; color:rgba(255,255,255,0.55); background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.09); padding:5px 11px; border-radius:5px; text-transform:uppercase; font-weight: 600; transition: border-color .3s, color .3s; }
+    .inventory-card:hover .spec-chip { border-color:rgba(201,168,76,0.2); color:rgba(255,255,255,0.7); }
+
+    /* Card footer — clean split layout */
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: auto; padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .card-price {
+      font-family: var(--ff-display); font-size: 2.1rem; line-height: 1; letter-spacing: 1px;
+      background:linear-gradient(135deg,var(--gold),var(--gold-lt));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+
+    /* ── IMPROVED: Details button — prominent, always visible ── */
+    .card-details-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 20px; border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.7);
+      font-family: var(--ff-cond); font-size: .78rem;
+      letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;
+      transition: all 0.35s var(--ease-out-expo);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .card-details-btn svg { width: 16px; height: 16px; transition: transform 0.3s var(--ease-out-expo); flex-shrink: 0; }
+    .card-details-btn:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--black);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(201,168,76,0.35);
+    }
+    .card-details-btn:hover svg { transform: translateX(3px); }
+    .inventory-card:hover .card-details-btn {
+      border-color: rgba(201,168,76,0.5);
+      color: var(--gold-lt);
+      background: rgba(201,168,76,0.08);
+    }
+    .inventory-card:hover .card-details-btn:hover {
+      background: var(--gold);
+      color: var(--black);
+      border-color: var(--gold);
+    }
+
+    /* DETAIL MODAL */
+    #detail-overlay { position:fixed; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(20px) saturate(120%); z-index:7000; display:flex; align-items:center; justify-content:center; padding:32px; overflow-y:auto; opacity:0; pointer-events:none; transition:opacity .4s ease; }
+    #detail-overlay.open { opacity:1; pointer-events:all; }
+    #detail-panel { background: linear-gradient(160deg, #121218 0%, #0a0a0e 100%); border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:100%; max-width:1000px; overflow:hidden; position:relative; transform:translateY(40px) scale(.95); transition:transform .5s var(--ease-out-expo); box-shadow:0 50px 120px rgba(0,0,0,1), 0 0 0 1px rgba(255,255,255,.05); }
+    #detail-overlay.open #detail-panel { transform:none; }
+    #detail-close { position:absolute; top:24px; right:24px; z-index:2; width:44px; height:44px; border-radius:10px; background:rgba(0,0,0,.6); border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.8); font-size:1.4rem; display:flex; align-items:center; justify-content:center; transition:all .3s var(--ease-spring); backdrop-filter:blur(10px); }
+    #detail-close:hover { border-color:var(--white); color:var(--white); background:rgba(255,255,255,.15); transform:scale(1.1) rotate(90deg);}
+    .detail-img-wrap { position:relative; overflow:hidden; }
+    #detail-img { width:100%; height:400px; object-fit:cover; filter:brightness(.9); }
+    .detail-img-wrap::after { content:''; position:absolute; inset:0; background:linear-gradient(0deg, #0a0a0e 0%, transparent 70%); }
+    .detail-img-badge { position:absolute; top:28px; left:28px; z-index:2; }
+    #detail-body { padding:0 48px 48px; }
+    .detail-top { display:flex; align-items:flex-end; justify-content:space-between; padding-top:24px; padding-bottom:28px; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:32px; }
+    #detail-name { font-family:var(--ff-display); font-size:3.2rem; color:var(--white); line-height:1; letter-spacing:1.5px; }
+    #detail-price-wrap { text-align:right; flex-shrink:0; }
+    #detail-price { font-family:var(--ff-display); font-size:2.8rem; background:linear-gradient(135deg,var(--gold),var(--gold-lt)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter: drop-shadow(0 4px 10px rgba(201,168,76,0.3)); }
+    .detail-price-sub { font-family:var(--ff-cond); font-size:.7rem; letter-spacing:2.5px; color:rgba(255,255,255,0.5); text-transform:uppercase; margin-top:6px; font-weight: 700; }
+    .detail-tabs { display:flex; gap:16px; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:32px; }
+    .detail-tab { font-family:var(--ff-cond); font-size:.9rem; letter-spacing:2px; text-transform:uppercase; font-weight:700; color:rgba(255,255,255,0.4); padding:14px 28px; border:none; background:none; border-bottom:3px solid transparent; transition:all .3s ease; position:relative; bottom:-1px; }
+    .detail-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+    .detail-tab:hover:not(.active) { color:var(--white); }
+    .detail-pane { display:none; animation: fadeIn .4s var(--ease-out-expo) forwards;}
+    .detail-pane.active { display:block; }
+    @keyframes fadeIn {from {opacity:0; transform:translateY(15px)} to {opacity:1; transform:none}}
+    #detail-desc { font-size:1.05rem; color:rgba(255,255,255,0.7); line-height:1.9; font-weight:300; max-width: 850px; }
+    .specs-grid { display:grid; grid-template-columns:1fr 1fr; gap:0; }
+    .spec-row { display:flex; flex-direction:column; padding:18px 0; border-bottom:1px solid rgba(255,255,255,0.05); transition:background .3s; }
+    .spec-row:hover { background:rgba(255,255,255,.03); padding-left: 10px;}
+    .spec-row:nth-child(odd) { padding-right:36px; border-right:1px solid rgba(255,255,255,0.05); }
+    .spec-row:nth-child(even) { padding-left:36px; }
+    .spec-row:nth-child(even):hover { padding-left: 46px; }
+    .spec-label { font-family:var(--ff-cond); font-size:.7rem; letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-bottom:8px; font-weight: 700; }
+    .spec-val { font-size:1.05rem; color:var(--white); font-weight:600; }
+    #detail-actions { margin-top:40px; display:flex; gap:20px; flex-wrap:wrap; }
+    .detail-btn { padding:16px 36px; border-radius:8px; font-family:var(--ff-cond); font-size:.9rem; letter-spacing:2px; text-transform:uppercase; font-weight:700; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,.03); color:rgba(255,255,255,0.8); transition:all .3s var(--ease-out-expo); }
+    .detail-btn:hover { border-color:var(--gold); color:var(--gold); background:rgba(201,168,76,0.1); transform: translateY(-2px);}
+
+    /* WISHLIST DRAWER */
+    #wish-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:8000; opacity:0; pointer-events:none; transition:opacity .5s ease; backdrop-filter:blur(8px); }
+    #wish-overlay.open { opacity:1; pointer-events:all; }
+    #wish-drawer { position:fixed; top:0; right:-480px; width:460px; max-width:95vw; height:100%; background: linear-gradient(160deg, #121218 0%, #0a0a0e 100%); border-left:1px solid rgba(255,255,255,0.1); z-index:8001; display:flex; flex-direction:column; overflow-y:auto; transition:right .6s var(--ease-out-expo); box-shadow:-40px 0 100px rgba(0,0,0,.9); }
+    #wish-drawer.open { right:0; }
+    .drawer-header { padding:36px 32px 28px; border-bottom:1px solid rgba(255,255,255,0.08); position:sticky; top:0; background:rgba(10,10,14,0.95); backdrop-filter:blur(16px); z-index:1; }
+    .drawer-eyebrow { font-family:var(--ff-cond); font-size:.7rem; letter-spacing:4px; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-bottom:10px; font-weight: 700; }
+    .drawer-title { font-family:var(--ff-display); font-size:2.4rem; color:var(--white); display:flex; justify-content:space-between; align-items:center; letter-spacing:1px; }
+    .drawer-title button { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.7); width:40px; height:40px; border-radius:8px; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:all .3s var(--ease-spring); }
+    .drawer-title button:hover { border-color:var(--white); color:var(--white); background:rgba(255,255,255,.15); transform:scale(1.1) rotate(90deg);}
+    #wish-list-container { padding:0 32px; flex:1; }
+    .wish-item { display:flex; justify-content:space-between; align-items:center; padding:24px 0; border-bottom:1px solid rgba(255,255,255,0.05); animation:wishIn .5s var(--ease-out-expo); }
+    @keyframes wishIn { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:none} }
+    .wish-item-name { font-family:var(--ff-cond); font-size:1.1rem; letter-spacing:1px; color:var(--white); font-weight:700; text-transform:uppercase; }
+    .wish-item-price { font-size:.9rem; color:var(--gold); margin-top:6px; font-family:var(--ff-cond); letter-spacing:1.5px; }
+    .wish-item-remove { background:none; border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.5); width:38px; height:38px; border-radius:8px; font-size:1rem; display:flex; align-items:center; justify-content:center; transition:all .3s var(--ease-spring); flex-shrink:0; }
+    .wish-item-remove:hover { background:rgba(230,28,36,0.9); border-color:var(--m-red); color:#fff; transform:scale(1.1);}
+    #wish-empty { display:none; margin:100px auto; text-align:center; font-family:var(--ff-cond); font-size:1rem; letter-spacing:2.5px; color:rgba(255,255,255,0.3); line-height:2.8; text-transform:uppercase; font-weight: 700; }
+    #wish-empty::before { content:'///M'; font-size:3.5rem; display:block; margin-bottom:20px; font-family: var(--ff-display); color: rgba(255,255,255,0.05); letter-spacing: 5px; }
+    #wish-total { margin-top:auto; padding:28px 32px; border-top:1px solid rgba(255,255,255,0.1); background:var(--surface2); position:sticky; bottom:0; }
+    .wish-total-label { font-family:var(--ff-cond); font-size:.7rem; letter-spacing:3.5px; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-bottom:10px; font-weight: 700; }
+    #wish-total-value { font-family:var(--ff-display); font-size:2.8rem; background:linear-gradient(135deg,var(--gold),var(--gold-lt)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; filter: drop-shadow(0 4px 10px rgba(201,168,76,0.3)); }
+    #wish-clear-btn { width:100%; margin-top:20px; padding:15px; background:none; border:1px solid rgba(230,28,36,.3); color:var(--m-red); border-radius:8px; font-family:var(--ff-cond); font-size:.85rem; letter-spacing:2px; text-transform:uppercase; font-weight:700; transition:all .3s ease; }
+    #wish-clear-btn:hover { background:rgba(230,28,36,0.9); border-color:var(--m-red); color:#fff; transform:translateY(-2px); box-shadow: 0 6px 15px rgba(230,28,36,0.3);}
+
+    /* ABOUT */
+    .about-section { position:relative; overflow:hidden; border-top:1px solid rgba(255,255,255,0.05); }
+    .about-grid { display:grid; grid-template-columns:1fr 1fr; }
+    .about-text { padding:80px 72px; background:var(--surface); }
+    .about-text h2 { font-family:var(--ff-display); font-size:clamp(3rem,5vw,4.8rem); line-height:.95; color:var(--white); margin-bottom:8px; }
+    .about-text h2 span { color:var(--gold); }
+    .about-text p { font-size:1.05rem; color:rgba(255,255,255,0.65); font-weight:300; line-height:1.9; margin-top:24px; }
+    .about-text strong { color:var(--gold-lt); font-weight:600; }
+    .about-facts { padding:80px 72px; background:var(--black); display:grid; grid-template-columns:1fr 1fr; gap:0; align-content:start; }
+    .fact { padding:32px 32px 32px 0; border-bottom:1px solid rgba(255,255,255,0.05); border-right:1px solid rgba(255,255,255,0.05); }
+    .fact:nth-child(even) { padding:32px 0 32px 32px; border-right:none; }
+    .fact:nth-last-child(-n+2) { border-bottom:none; }
+    .fact strong { font-family:var(--ff-display); font-size:3.5rem; color:var(--gold); display:block; line-height:1; background:linear-gradient(135deg,var(--gold) 30%,var(--gold-lt)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .fact span { font-family:var(--ff-cond); font-size:.8rem; letter-spacing:2.5px; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-top:8px; display:block; font-weight: 700; }
+
+    /* FOOTER */
+    footer { background:var(--black); border-top:1px solid rgba(255,255,255,0.08); }
+    .footer-top { padding:80px 56px 64px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:48px; }
+    .footer-brand { display:flex; align-items:center; gap:16px; margin-bottom:24px; }
+    .footer-brand img { width:48px; opacity:.7; }
+    .footer-brand-name { font-family:var(--ff-display); font-size:1.8rem; color:var(--white); letter-spacing:2px; }
+    .footer-brand-desc { font-size:.95rem; color:rgba(255,255,255,0.5); font-weight:300; line-height:1.8; max-width:280px; }
+    .footer-col-title { font-family:var(--ff-cond); font-size:.75rem; letter-spacing:4px; color:var(--gold); text-transform:uppercase; margin-bottom:24px; font-weight: 700; }
+    .footer-links-list { list-style:none; display:flex; flex-direction:column; gap:14px; }
+    .footer-links-list a { font-family:var(--ff-cond); font-size:.95rem; letter-spacing:1px; color:rgba(255,255,255,0.5); text-transform:uppercase; font-weight: 600; transition:color .3s, padding-left .3s; }
+    .footer-links-list a:hover { color:var(--gold); padding-left: 8px;}
+    .footer-contact-item { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+    .footer-contact-item svg { color:var(--gold); flex-shrink:0; }
+    .footer-contact-item a, .footer-contact-item span { font-family:var(--ff-cond); font-size:.95rem; letter-spacing:.5px; font-weight: 600; color:rgba(255,255,255,0.5); transition:color .3s; }
+    .footer-contact-item a:hover { color:var(--gold); }
+    .footer-bottom { padding:24px 56px; border-top:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; background: #050508; }
+    .footer-copy { font-family:var(--ff-cond); font-size:.75rem; letter-spacing:1.5px; color:rgba(255,255,255,.25); text-transform: uppercase; }
+    .footer-legal { display:flex; gap:24px; }
+    .footer-legal a { font-family:var(--ff-cond); font-size:.7rem; letter-spacing:1.5px; color:rgba(255,255,255,.3); text-transform:uppercase; font-weight: 700; transition:color .3s; }
+    .footer-legal a:hover { color:rgba(255,255,255,0.7); }
+
+    /* LOGIN MODAL */
+    #login-page { display:none; position:fixed; inset:0; z-index:9000; background:rgba(0,0,0,.85); backdrop-filter:blur(24px) saturate(120%); align-items:center; justify-content:center; }
+    #login-page.open { display:flex; }
+    .login-container { background: linear-gradient(160deg, #121218 0%, #0a0a0e 100%); border:1px solid rgba(255,255,255,0.1); padding:56px 48px; width:420px; max-width:95vw; border-radius:20px; animation:loginPop .5s var(--ease-out-expo); box-shadow:0 50px 100px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.05); }
+    @keyframes loginPop { from{opacity:0;transform:scale(.92) translateY(30px)} to{opacity:1;transform:none} }
+    .login-logo-wrap { text-align:center; margin-bottom:40px; }
+    .login-logo-wrap img { width:60px; margin:0 auto 20px; filter:drop-shadow(0 0 20px rgba(201,168,76,.6)); }
+    .login-logo-wrap h2 { font-family:var(--ff-display); font-size:2.6rem; color:var(--white); letter-spacing:2px; line-height:1; }
+    .login-logo-wrap p { font-family:var(--ff-cond); font-size:.8rem; letter-spacing:3px; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-top:8px; font-weight: 700; }
+    .form-group { margin-bottom:24px; }
+    .form-group label { display:block; font-family:var(--ff-cond); font-size:.75rem; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:10px; font-weight: 700; }
+    .form-group input { width:100%; padding:14px 18px; border-radius:8px; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.03); color:var(--white); font-family:var(--ff-body); font-size:1.05rem; outline:none; transition:all .3s ease; }
+    .form-group input:focus { border-color:var(--gold); background: rgba(0,0,0,0.6); box-shadow:0 0 0 4px rgba(201,168,76,.2); }
+    .form-group input.error { border-color:var(--m-red); }
+    .field-error { font-size:.8rem; color:var(--m-red); margin-top:8px; display:none; font-family:var(--ff-cond); letter-spacing:1px; font-weight: 600; }
+    .field-error.show { display:block; }
+    .login-links { margin-top:24px; text-align:center; font-family:var(--ff-cond); font-size:.85rem; letter-spacing:1px; color:rgba(255,255,255,0.4); font-weight: 600; }
+    .login-links a { color:var(--gold); transition:color .3s; }
+    .login-links a:hover { color:var(--gold-lt); }
+    #login-close-btn { display:block; margin:24px auto 0; background:none; border:none; color:rgba(255,255,255,0.4); font-family:var(--ff-cond); font-size:.8rem; letter-spacing:1.5px; text-decoration:underline; text-underline-offset:4px; font-weight: 700; transition:color .3s; }
+    #login-close-btn:hover { color:var(--white); }
+    #login-spinner { display:none; width:22px; height:22px; border:3px solid rgba(0,0,0,.2); border-top-color:var(--black); border-radius:50%; animation:spin .7s linear infinite; margin:0 auto; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    /* SCROLL REVEAL */
+    .reveal { opacity:0; transform:translateY(40px); transition:opacity .8s ease, transform .8s var(--ease-out-expo); }
+    .reveal.visible { opacity:1; transform:none; }
+
+    /* DISCLAIMER */
+    .disclaimer { text-align:center; font-size:.8rem; color:rgba(255,255,255,.2); font-family:var(--ff-cond); letter-spacing:1px; padding:24px 48px 0; text-transform: uppercase; font-weight: 600; }
+
+    /* RESPONSIVE */
+    @media(max-width:1000px){ .about-grid { grid-template-columns:1fr; } .about-facts { grid-column:1; } .hero-stats { display:none; } .section-count { display:none; } .footer-top { grid-template-columns:1fr 1fr; } }
+    @media(max-width:768px){ header { padding:16px 24px; flex-wrap:wrap; } nav.main-nav { display:none; width:100%; order:10; flex-direction:column; padding:12px 0; border-top:1px solid rgba(255,255,255,0.05); } nav.main-nav.open { display:flex; } nav.main-nav ul { flex-direction:column; gap:0; } nav.main-nav ul li a { padding:12px 0; display:block; } nav.main-nav ul li a::after { display:none; } #hamburger { display:flex; } .header-stripe { display:none; } .hero-content { padding:0 24px 72px; } .inventory { padding:64px 24px; } .filter-bar { padding:16px 24px; top:3px; } .about-text { padding:56px 24px; } .about-facts { padding:56px 24px; } footer .footer-top { grid-template-columns:1fr; padding:56px 24px 40px; } .footer-bottom { padding:24px; flex-direction:column; align-items:flex-start; } .inventory-list { grid-template-columns:1fr; } }
+    @media(max-width:480px){ #detail-body { padding:0 24px 32px; } .specs-grid { grid-template-columns:1fr; } .spec-row:nth-child(odd) { border-right:none; padding-right:0; } .spec-row:nth-child(even) { padding-left:0; } #wish-drawer { width:100%; } .detail-top { flex-direction:column; align-items:flex-start; gap:12px; } }
+
+    /* M POWER METRICS */
+    .mmetrics { background: linear-gradient(90deg, rgba(3,3,5,1) 0%, rgba(10,10,16,1) 50%, rgba(3,3,5,1) 100%); border-top: 1px solid rgba(201,168,76,.15); border-bottom: 1px solid rgba(201,168,76,.15); overflow: hidden; }
+    .mmetrics-inner { display: flex; align-items: center; justify-content: space-around; overflow-x: auto; scrollbar-width: none; padding: 0 56px; max-width: 1440px; margin: 0 auto; }
+    .mmetrics-inner::-webkit-scrollbar { display: none }
+    .mmet { display: flex; flex-direction: column; align-items: center; padding: 32px 48px; position: relative; white-space: nowrap; flex-shrink: 0; }
+    .mmet-val { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; line-height: 1; background: linear-gradient(135deg, var(--gold) 20%, var(--gold-lt) 80%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 15px rgba(201,168,76,0.3)); }
+    .mmet-unit { font-family: 'Barlow Condensed', sans-serif; font-size: .9rem; color: rgba(255,255,255,0.5); position: absolute; top: 28px; right: 26px; font-weight: 700;}
+    .mmet-lbl { font-family: 'Barlow Condensed', sans-serif; font-size: .7rem; letter-spacing: 3px; color: rgba(255,255,255,0.6); text-transform: uppercase; margin-top: 8px; font-weight: 700; }
+    .mmet-sep { width: 1px; height: 56px; background: linear-gradient(180deg, transparent, rgba(201,168,76,.3), transparent); flex-shrink: 0; }
+
+    /* SPOTLIGHT */
+    .spotlight-sec { position: relative; height: 65vh; min-height: 600px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .sl-bg { position: absolute; inset: 0; background-size: cover; background-position: center; filter: brightness(.3) saturate(.8); transform: scale(1.04); transition: background-image .3s ease, filter .7s, transform 8s linear; }
+    .sl-bg.active { transform: scale(1.0); }
+    .sl-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(2,2,4,1) 25%, rgba(2,2,4,.3) 100%), linear-gradient(0deg, rgba(2,2,4,.9) 0%, transparent 50%); }
+    .sl-vignette { position: absolute; inset: 0; pointer-events: none; z-index: 4; box-shadow: inset 0 0 180px 120px var(--black); }
+    .sl-content { position: relative; z-index: 5; display: flex; align-items: center; width: 100%; max-width: 1440px; padding: 0 56px; gap:48px; }
+    .sl-info { flex: 1; max-width: 580px; z-index: 10; }
+    .sl-ey { font-family: 'Barlow Condensed'; font-size: .75rem; letter-spacing: 6px; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; font-weight:700;}
+    .sl-ey::before { content: ''; display: block; width: 40px; height: 2px; background: var(--gold); }
+    .sl-badge { display: inline-block; font-family: 'Barlow Condensed'; font-size: .7rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; padding: 6px 16px; border-radius: 6px; margin-bottom: 20px; background: rgba(201,168,76,.15); border: 1px solid rgba(201,168,76,.4); color: var(--gold-lt); box-shadow: 0 4px 15px rgba(0,0,0,0.4);}
+    .sl-name { font-family: 'Bebas Neue'; font-size: clamp(3.2rem, 5vw, 5rem); color: var(--white); line-height: .9; margin-bottom: 16px; transition: opacity .4s; text-shadow: 0 6px 20px rgba(0,0,0,0.8);}
+    .sl-hp { font-family: 'Bebas Neue'; font-size: 4.8rem; line-height: 1; background: linear-gradient(135deg, var(--gold), var(--gold-lt)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 32px; filter: drop-shadow(0 4px 15px rgba(201,168,76,0.3));}
+    .sl-hp span { font-size: 2.2rem; -webkit-text-fill-color: rgba(255,255,255,0.4); }
+    .sl-stats { display: flex; gap: 40px; margin-bottom: 32px; }
+    .sl-stat { display: flex; flex-direction: column; }
+    .sl-stat-v { font-family: 'Bebas Neue'; font-size: 1.8rem; color: var(--white); line-height: 1; margin-bottom:6px;}
+    .sl-stat-l { font-family: 'Barlow Condensed'; font-size: .65rem; letter-spacing: 2.5px; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight:700;}
+    .sl-price { font-family: 'Barlow Condensed'; font-size: 1rem; letter-spacing: 3px; color: rgba(255,255,255,0.7); text-transform: uppercase; margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid rgba(255,255,255,0.15); font-weight: 700;}
+    .sl-img-wrap { flex: 1.4; position: absolute; right: 0; top: 0; bottom: 0; width: 60%; display: flex; align-items: center; justify-content: center; cursor: default; overflow: hidden; z-index: 2; }
+    .sl-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: right center; filter: drop-shadow(0 50px 60px rgba(0,0,0,0.9)); transition: opacity .8s ease; opacity: 0; mask-image: linear-gradient(to right, transparent 0%, black 20%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%); }
+    .sl-img.in { opacity: 1; }
+    .sl-nav { position: absolute; bottom: 40px; left: 56px; z-index: 10; display: flex; align-items: center; justify-content: flex-start; gap: 24px; }
+    .sl-arr { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,0.7); width: 48px; height: 48px; border-radius: 50%; cursor: pointer; transition: all .3s var(--ease-spring); display: flex; align-items:center; justify-content:center; font-size:1.2rem; backdrop-filter: blur(8px);}
+    .sl-arr:hover { border-color: var(--gold); color: var(--black); background: var(--gold); box-shadow: 0 6px 20px rgba(201,168,76,0.4); transform: scale(1.05);}
+    .sl-dots { display: flex; gap: 12px; align-items: center; }
+    .sl-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.2); cursor: pointer; transition: all .4s cubic-bezier(0.2, 1, 0.3, 1); }
+    .sl-dot.on { background: var(--gold); width: 32px; border-radius: 4px; box-shadow: 0 0 12px rgba(201,168,76,0.5);}
+    .sl-progress-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: rgba(255,255,255,.05); z-index: 10; }
+    .sl-prog { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-lt)); width: 0%; transition: width 0.1s linear; }
+
+    /* SVG Performance Ring */
+    .perf-ring { position: absolute; top: 16px; left: 16px; z-index: 10; width: 64px; height: 64px; filter: drop-shadow(0 0 10px rgba(0,0,0,.8)); pointer-events: none; }
+    .perf-ring .track { fill: none; stroke: rgba(255, 255, 255, .08); stroke-width: 5; }
+    .perf-ring .fill { fill: none; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 113; stroke-dashoffset: 113; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 1.4s var(--ease-spring); }
+    .perf-ring .fill.gold { stroke: var(--gold); }
+    .perf-ring .fill.phev { stroke: var(--phev-lt); }
+    .perf-ring .fill.ev { stroke: #50e0ff; }
+    .perf-ring text { font-family: 'Bebas Neue'; font-size: 15px; fill: var(--white); text-anchor: middle; dominant-baseline: central; }
+    .inventory-card:hover .perf-ring .fill { stroke-dashoffset: var(--dashoffset) !important; }
+
+    /* Exhaust Sound */
+    .exhaust-btn { position: absolute; bottom: 20px; left: 20px; background: rgba(10,10,14,.9); border: 1px solid rgba(255,255,255,.2); backdrop-filter: blur(12px); padding: 10px 16px; border-radius: 8px; font-family: 'Barlow Condensed'; font-size: .75rem; letter-spacing: 1.5px; color: var(--white); z-index: 10; display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: uppercase; font-weight: 700; transition: all .3s var(--ease-out-expo); box-shadow: 0 4px 15px rgba(0,0,0,0.5);}
+    .exhaust-btn:hover { border-color: var(--gold); background: var(--gold); color: var(--black); box-shadow: 0 8px 25px rgba(201,168,76,0.4); transform: translateY(-2px);}
+    .wave-icon { display: flex; gap: 3px; align-items: center; height: 14px; }
+    .wave-icon i { width: 2px; background: currentColor; border-radius: 1px; height: 4px; transition: height 0.1s; display: inline-block; }
+    .exhaust-btn.playing i { animation: eq 0.6s infinite ease-in-out alternate; }
+    .exhaust-btn.playing i:nth-child(2) { animation-delay: 0.1s; }
+    .exhaust-btn.playing i:nth-child(3) { animation-delay: 0.2s; }
+    .exhaust-btn.playing i:nth-child(4) { animation-delay: 0.3s; }
+    @keyframes eq { from { height: 4px; } to { height: 14px; } }
+
+    /* FINDER */
+    .finder-sec { background: linear-gradient(160deg, rgba(3,3,5,1) 0%, rgba(12,12,16,1) 60%, rgba(3,3,5,1) 100%); border-top: 1px solid rgba(255,255,255,.05); border-bottom: 1px solid rgba(255,255,255,.05); padding: 140px 56px; }
+    .finder-inner { max-width: 960px; margin: 0 auto; }
+    .finder-head { text-align: center; margin-bottom: 72px; }
+    .finder-ey { font-family: 'Barlow Condensed'; font-size: .8rem; letter-spacing: 6px; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 16px; font-weight:700;}
+    .finder-ey::before,.finder-ey::after { content: ''; display: block; width: 48px; height: 2px; background: var(--gold); }
+    .finder-title { font-family: 'Bebas Neue'; font-size: clamp(3.5rem,6vw,6rem); color: var(--white); line-height: .9; margin-bottom: 16px; text-shadow: 0 6px 25px rgba(0,0,0,0.5);}
+    .finder-title em { font-style: normal; background:linear-gradient(135deg,var(--gold),var(--gold-lt)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;}
+    .finder-widget { background: linear-gradient(145deg, rgba(24,24,30,0.8), rgba(12,12,16,0.9)); border: 1px solid rgba(255,255,255,.1); border-radius: 24px; padding: 64px; box-shadow: 0 50px 120px rgba(0,0,0,.9); min-height: 260px; backdrop-filter: blur(20px);}
+    .fstep { display: none; }
+    .fstep.active { display: block; animation: fadeUp .7s var(--ease-spring); }
+    .fstep-q { font-family: 'Barlow Condensed'; font-size: 1.6rem; letter-spacing: 1.5px; color: var(--white); text-transform: uppercase; font-weight: 700; margin-bottom: 36px; text-align: center; }
+    .fchoices { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+    .fchoice { padding: 24px; border: 1px solid rgba(255,255,255,.12); border-radius: 14px; background: rgba(255,255,255,.03); color: rgba(255,255,255,0.6); font-family: 'Barlow Condensed'; font-size: 1rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; transition: all .4s var(--ease-out-expo); cursor: pointer; text-align:center; position:relative; overflow:hidden;}
+    .fchoice::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:4px; background:var(--gold); transform:scaleX(0); transition:transform .4s var(--ease-out-expo); transform-origin:left;}
+    .fchoice:hover { border-color: rgba(201,168,76,0.5); color: var(--gold-lt); background: rgba(201,168,76,.08); transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.4);}
+    .fchoice.selected { background: rgba(201,168,76,0.15); border-color: var(--gold); color: var(--gold-lt); box-shadow: inset 0 0 25px rgba(201,168,76,0.15); }
+    .fchoice.selected::after { transform:scaleX(1); }
+    .fresult { display: flex; align-items: center; gap: 48px; }
+    .fresult-img { width: 360px; height: 220px; object-fit: cover; border-radius: 14px; border: 1px solid rgba(255,255,255,.15); flex-shrink: 0; box-shadow: 0 30px 60px rgba(0,0,0,0.7);}
+    .fresult-hp { font-family: 'Bebas Neue'; font-size: 3.5rem; background: linear-gradient(135deg, var(--gold), var(--gold-lt)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin: 10px 0 16px; filter:drop-shadow(0 4px 12px rgba(201,168,76,0.25));}
+    .fresult-why { font-size: 1.05rem; color: rgba(255,255,255,0.7); font-weight: 300; line-height: 1.8; margin-bottom: 24px; }
+    .fresult-info h3 { font-family: 'Bebas Neue'; font-size: 2.6rem; color: var(--white); line-height: 1; letter-spacing:1px;}
+    .fstep-reset { padding: 16px 32px; border: 1px solid var(--gold); color: var(--gold); background: transparent; border-radius: 8px; cursor: pointer; text-transform: uppercase; font-family: 'Barlow Condensed'; font-weight: 700; letter-spacing:2px; transition:all .3s ease;}
+    .fstep-reset:hover { background: var(--gold); color:var(--black); box-shadow: 0 6px 20px rgba(201,168,76,0.3); transform: translateY(-2px);}
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
   </style>
 </head>
-
 <body>
-  <header>
-    <div class="logo">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/BMW_M_logo.svg/2560px-BMW_M_logo.svg.png" width="75px" alt="BMW M Logo">
+
+<div class="m-stripe-top"></div>
+
+<div id="page-loader">
+  <img class="loader-logo" src="https://www.carlogos.org/car-logos/bmw-m-logo.png" alt="BMW M">
+  <div class="loader-line"></div>
+  <p class="loader-label">M Division Showcase</p>
+</div>
+
+<div id="toast-container"></div>
+<button id="back-to-top" title="Back to top">↑</button>
+
+<div id="wish-overlay"></div>
+<div id="wish-drawer">
+  <div class="drawer-header">
+    <p class="drawer-eyebrow">My Selection</p>
+    <div class="drawer-title">Garage<button id="wish-drawer-close">✕</button></div>
+  </div>
+  <div id="wish-list-container"></div>
+  <p id="wish-empty">Your garage is empty.<br>Add a model to begin.</p>
+  <div id="wish-total" style="display:none">
+    <p class="wish-total-label">Combined Value</p>
+    <div id="wish-total-value"></div>
+    <button id="wish-clear-btn">Clear Garage</button>
+  </div>
+</div>
+
+<div id="detail-overlay">
+  <div id="detail-panel">
+    <button id="detail-close">✕</button>
+    <div class="detail-img-wrap">
+      <img id="detail-img" src="" alt="">
+      <div class="detail-img-badge" id="detail-img-badge"></div>
     </div>
-    
-    <nav class="main-nav">
-      <ul>
+    <div id="detail-body">
+      <div class="detail-top">
+        <h1 id="detail-name"></h1>
+        <div id="detail-price-wrap">
+          <div id="detail-price"></div>
+          <div class="detail-price-sub">Ex-Showroom (Indicative)</div>
+        </div>
+      </div>
+      <div class="detail-tabs">
+        <button class="detail-tab active" data-tab="overview">Overview</button>
+        <button class="detail-tab" data-tab="specs">Specifications</button>
+      </div>
+      <div class="detail-pane active" id="pane-overview"><p id="detail-desc"></p></div>
+      <div class="detail-pane" id="pane-specs"><div class="specs-grid" id="detail-specs"></div></div>
+      <div id="detail-actions">
+        <button id="detail-wish-btn" class="detail-btn primary">❤ Add to Garage</button>
+        <button class="detail-btn" onclick="document.getElementById('detail-overlay').classList.remove('open');document.body.style.overflow=''">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="login-page">
+  <div class="login-container">
+    <div class="login-logo-wrap">
+      <img src="https://www.carlogos.org/car-logos/bmw-m-logo.png" alt="BMW M">
+      <h2>MX Login</h2>
+      <p>M Division Showcase</p>
+    </div>
+    <form id="login-form" novalidate>
+      <div class="form-group">
+        <label for="login-user">Username</label>
+        <input type="text" id="login-user" placeholder="Your username" autocomplete="username">
+        <span class="field-error" id="err-user">Username is required.</span>
+      </div>
+      <div class="form-group">
+        <label for="login-pass">Password</label>
+        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+        <span class="field-error" id="err-pass">Password must be at least 6 characters.</span>
+      </div>
+      <button type="submit" class="login-submit" id="login-submit-btn">
+        <span id="login-btn-text">Login</span>
+        <div id="login-spinner"></div>
+      </button>
+    </form>
+    <div class="login-links">
+      <p><a href="#" id="forgot-link">Forgot password?</a></p>
+      <p style="margin-top:8px">No account? <a href="#" id="signup-link">Sign up</a></p>
+    </div>
+    <button id="login-close-btn">← Back to site</button>
+  </div>
+</div>
+
+<header id="main-header">
+  <div class="logo"><img src="https://www.carlogos.org/car-logos/bmw-m-logo.png" alt="BMW M Logo"></div>
+  <div class="header-stripe"></div>
+  <button id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <nav class="main-nav" id="main-nav">
+    <ul>
+      <li><a href="#inventory">Inventory</a></li>
+      <li><a href="#about">Heritage</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <div class="header-end">
+    <button class="hdr-btn" id="wish-btn">Garage<span id="wish-count">0</span></button>
+    <button class="hdr-login" id="login-nav-btn">Login</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grain"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">BMW M Division Showcase</p>
+    <h1>Built for<br><em>Performance</em></h1>
+    <p>Where motorsport precision meets everyday mastery. The M badge is not an option — it is a philosophy.</p>
+    <div class="hero-actions">
+      <button class="btn-gold" onclick="smoothScrollTo('#inventory')">View Inventory</button>
+      <button class="btn-ghost" onclick="smoothScrollTo('#about')">Our Heritage</button>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>625+</strong><span>Peak Horsepower</span></div>
+    <div class="hero-stat"><strong>3.2s</strong><span>0–100 km/h</span></div>
+    <div class="hero-stat"><strong>50+</strong><span>Years of M</span></div>
+  </div>
+  <div class="scroll-cue"><div class="scroll-cue-line"></div><span>Scroll</span></div>
+</section>
+
+<div class="mmetrics">
+  <div class="mmetrics-inner">
+    <div class="mmet"><div class="mmet-val">625</div><div class="mmet-unit">HP</div><div class="mmet-lbl">Peak Output</div></div><div class="mmet-sep"></div>
+    <div class="mmet"><div class="mmet-val">3.2</div><div class="mmet-unit">SEC</div><div class="mmet-lbl">0-100 km/h</div></div><div class="mmet-sep"></div>
+    <div class="mmet"><div class="mmet-val">50</div><div class="mmet-unit">YRS</div><div class="mmet-lbl">M Heritage</div></div><div class="mmet-sep"></div>
+    <div class="mmet"><div class="mmet-val">8</div><div class="mmet-unit">CYL</div><div class="mmet-lbl">TwinPower Turbo</div></div>
+  </div>
+</div>
+
+<div class="marquee-section" aria-hidden="true">
+  <div class="marquee-row">
+    <div class="marquee-track">
+      <span>M2</span><span class="accent">•</span><span>M3</span><span class="accent">•</span><span>M4</span><span class="accent">•</span><span>M5</span><span class="accent">•</span><span>M8</span><span class="accent">•</span><span class="phev">XM</span><span class="accent">•</span>
+      <span>M2</span><span class="accent">•</span><span>M3</span><span class="accent">•</span><span>M4</span><span class="accent">•</span><span>M5</span><span class="accent">•</span><span>M8</span><span class="accent">•</span><span class="phev">XM</span><span class="accent">•</span>
+      <span>M2</span><span class="accent">•</span><span>M3</span><span class="accent">•</span><span>M4</span><span class="accent">•</span><span>M5</span><span class="accent">•</span><span>M8</span><span class="accent">•</span><span class="phev">XM</span><span class="accent">•</span>
+    </div>
+  </div>
+  <div class="marquee-row">
+    <div class="marquee-track reverse">
+      <span>Competition</span><span class="accent">—</span><span>xDrive</span><span class="accent">—</span><span>TwinPower</span><span class="accent">—</span><span>Nürburgring</span><span class="accent">—</span><span>Motorsport</span><span class="accent">—</span>
+      <span>Competition</span><span class="accent">—</span><span>xDrive</span><span class="accent">—</span><span>TwinPower</span><span class="accent">—</span><span>Nürburgring</span><span class="accent">—</span><span>Motorsport</span><span class="accent">—</span>
+      <span>Competition</span><span class="accent">—</span><span>xDrive</span><span class="accent">—</span><span>TwinPower</span><span class="accent">—</span><span>Nürburgring</span><span class="accent">—</span><span>Motorsport</span><span class="accent">—</span>
+    </div>
+  </div>
+</div>
+
+<section class="spotlight-sec">
+  <div class="sl-bg" id="sl-bg"></div>
+  <div class="sl-overlay"></div>
+  <div class="sl-vignette"></div>
+  <div class="sl-content">
+    <div class="sl-info reveal">
+      <div class="sl-ey">Featured Masterpiece</div>
+      <div class="sl-badge" id="sl-badge">Badge</div>
+      <h2 class="sl-name" id="sl-name">Name</h2>
+      <div class="sl-hp" id="sl-hp">HP <span>HP</span></div>
+      <div class="sl-price" id="sl-price">Price</div>
+      <div class="sl-stats">
+        <div class="sl-stat"><span class="sl-stat-v" id="sl-s1">3.0s</span><span class="sl-stat-l">0-100 km/h</span></div>
+        <div class="sl-stat"><span class="sl-stat-v" id="sl-s2">Coupe</span><span class="sl-stat-l">Body Style</span></div>
+      </div>
+    </div>
+    <div class="sl-img-wrap" id="sl-img-wrap">
+      <img class="sl-img" id="sl-img" src="" alt="Spotlight Car">
+    </div>
+  </div>
+  <div class="sl-nav">
+    <button class="sl-arr" id="sl-prev">←</button>
+    <div class="sl-dots" id="sl-dots"></div>
+    <button class="sl-arr" id="sl-next">→</button>
+  </div>
+  <div class="sl-progress-bar"><div class="sl-prog" id="sl-prog"></div></div>
+</section>
+
+<div class="filter-bar has-header" id="filter-bar">
+  <div class="search-wrap">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="search-input" placeholder="Search models…">
+  </div>
+  <div class="filter-pill">
+    <label for="sort-select">Sort</label>
+    <select id="sort-select">
+      <option value="default">Default</option>
+      <option value="price-asc">Price ↑</option>
+      <option value="price-desc">Price ↓</option>
+      <option value="name-asc">Name A→Z</option>
+    </select>
+  </div>
+  <div class="results-count" id="results-count"><span id="visible-count">6</span> Models</div>
+</div>
+
+<section id="inventory" class="inventory">
+  <div class="section-header reveal">
+    <div class="section-header-left">
+      <p class="section-eyebrow">Current Selection</p>
+      <h2>M-Series<br>Featured Inventory</h2>
+    </div>
+    <div class="section-count">06</div>
+  </div>
+  <div class="inventory-list" id="inventory-list"></div>
+  <p id="no-results">No models match your search.</p>
+  <p class="disclaimer">*Prices are ex-showroom (indicative) and subject to change based on location and options.</p>
+</section>
+
+<section class="finder-sec" id="finder">
+  <div class="finder-inner">
+    <div class="finder-head reveal">
+      <div class="finder-ey">Find Your M</div>
+      <h2 class="finder-title">Discover Your <em>Ultimate</em> Drive</h2>
+    </div>
+    <div class="finder-widget reveal">
+      <div class="fstep active" id="fstep-0">
+        <div class="fstep-q">What is your primary driving environment?</div>
+        <div class="fchoices">
+          <div class="fchoice" onclick="selectQA(0, 'track')">Racetrack & Canyons</div>
+          <div class="fchoice" onclick="selectQA(0, 'city')">City Streets & Highways</div>
+          <div class="fchoice" onclick="selectQA(0, 'touring')">Long Distance Touring</div>
+        </div>
+      </div>
+      <div class="fstep" id="fstep-1">
+        <div class="fstep-q">Which body style appeals to you most?</div>
+        <div class="fchoices">
+          <div class="fchoice" onclick="selectQA(1, 'coupe')">Aggressive Coupe</div>
+          <div class="fchoice" onclick="selectQA(1, 'sedan')">Practical Sedan</div>
+          <div class="fchoice" onclick="selectQA(1, 'suv')">Commanding SUV (SAV)</div>
+        </div>
+      </div>
+      <div class="fstep" id="fstep-2">
+        <div class="fstep-q">What is your powertrain preference?</div>
+        <div class="fchoices">
+          <div class="fchoice" onclick="selectQA(2, 'gas')">Pure Combustion</div>
+          <div class="fchoice" onclick="selectQA(2, 'hybrid')">Plug-in Hybrid (PHEV)</div>
+          <div class="fchoice" onclick="selectQA(2, 'ev')">Fully Electric</div>
+        </div>
+      </div>
+      <div class="fstep" id="fstep-res">
+        <div class="fstep-q">Your Perfect M Match</div>
+        <div class="fresult" id="fresult-content"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="about-section" id="about">
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p class="section-eyebrow">Est. 1972</p>
+      <h2>The <span>M</span><br>Division</h2>
+      <p>BMW M GmbH — formerly BMW Motorsport — was born to dominate the racetrack. What began as a racing programme evolved into a philosophy: that every road car bearing the <strong>M badge</strong> must be exceptional. Tested on the <strong>Nürburgring Nordschleife</strong>, refined through decades of competition, and built for those who demand more.</p>
+      <p style="margin-top:16px">Today the M Division stands at the forefront of electrified performance, with the <strong>BMW XM</strong> marking a bold new era — proving that power and sustainability are no longer mutually exclusive.</p>
+    </div>
+    <div class="about-facts reveal">
+      <div class="fact"><strong>1972</strong><span>Year M Division Founded</span></div>
+      <div class="fact"><strong>650+</strong><span>Horsepower — Peak M Output</span></div>
+      <div class="fact"><strong>6</strong><span>Models in Current Showcase</span></div>
+      <div class="fact"><strong>∞</strong><span>Passion for Driving</span></div>
+    </div>
+  </div>
+</div>
+
+<footer id="contact">
+  <div class="footer-top">
+    <div class="footer-brand-col">
+      <div class="footer-brand">
+        <img src="https://www.carlogos.org/car-logos/bmw-m-logo.png" alt="BMW M">
+        <span class="footer-brand-name">M Division</span>
+      </div>
+      <p class="footer-brand-desc">An unofficial showcase celebrating the engineering excellence of BMW's M Division.</p>
+    </div>
+    <div>
+      <p class="footer-col-title">Navigation</p>
+      <ul class="footer-links-list">
         <li><a href="#inventory">Inventory</a></li>
-        <li><a href="#about">About M</a></li>
+        <li><a href="#about">Heritage</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
-    </nav>
-    
-    <nav class="secondary-nav">
-      <ul>
-        <li><a href="login.html">Login</a></li>
-      </ul>
-    </nav>
-  </header>
-  
-  <main>
-    <section class="hero">
-      <div class="hero-content">
-        <h1>Experience the BMW M Division</h1>
-        <p>The ultimate blend of high-performance racing technology and everyday luxury. Power, precision, and passion.</p>
-        <button class="btn-primary" onclick="location.href='#inventory'">View M Inventory</button>
+    </div>
+    <div>
+      <p class="footer-col-title">Contact</p>
+      <div class="footer-contact-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <a href="mailto:info@bmw-m.com">info@bmw-m.com</a>
       </div>
-    </section>
-    
-    <section id="inventory" class="inventory">
-      <h2>M-Series Featured Inventory</h2>
-      <div class="inventory-list">
-        
-        <div class="inventory-card">
-          <img src="https://bmw.scene7.com/is/image/BMW/g87_dynamics_fb?qlt=80&wid=1024&fmt=webp" alt="BMW M2 Coupe" />
-          <div class="inventory-info">
-            <h3>BMW M2 Coupe (G87)</h3>
-            <p class="price">₹1.03 Crore*</p>
-            <p class="desc">Compact M power. A powerful and agile sports car built for the purist driving experience.</p>
-            <div class="card-actions">
-              <a class="small-btn" href="m2-coupe-details.html">Details</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="inventory-card">
-          <img src="https://bmw.scene7.com/is/image/BMW/g80_stage_dsk_fb?qlt=80&wid=1024&fmt=webp" alt="BMW M3 Sedan" />
-          <div class="inventory-info">
-            <h3>BMW M3 Competition Sedan</h3>
-            <p class="price">₹1.47 Crore*</p>
-            <p class="desc">The iconic sports sedan combining racetrack performance with luxurious daily practicality.</p>
-            <div class="card-actions">
-              <a class="small-btn" href="m3-sedan-details.html">Details</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="inventory-card">
-          <img src="https://bmw.scene7.com/is/image/BMW/g82_stage_dsk_fb?qlt=80&wid=1024&fmt=webp" alt="BMW M4 Coupe" />
-          <div class="inventory-info">
-            <h3>BMW M4 Competition Coupe</h3>
-            <p class="price">₹1.52 Crore*</p>
-            <p class="desc">Available in coupe body style, featuring aggressive styling and a twin-turbo engine.</p>
-            <div class="card-actions">
-              <a class="small-btn" href="m4-coupe-details.html">Details</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="inventory-card">
-          <img src="https://bmw.scene7.com/is/image/BMW/g90_stage_dsk_fb?qlt=80&wid=1024&fmt=webp" alt="BMW M5 Sedan" />
-          <div class="inventory-info">
-            <h3>BMW M5 Sedan</h3>
-            <p class="price">₹2.01 Crore*</p>
-            <p class="desc">A high-performance luxury sedan with exceptional power and refined executive comfort.</p>
-            <div class="card-actions">
-              <a class="small-btn" href="m5-sedan-details.html">Details</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="inventory-card">
-          <img src="https://www.bmw-infinitycars.in/sites/default/files/2022-09/M8_1280x610%20%281%29_0.jpg" alt="BMW M8 Coupe" />
-          <div class="inventory-info">
-            <h3>BMW M8 Competition Coupe</h3>
-            <p class="price">₹2.44 Crore*</p>
-            <p class="desc">The flagship M-Series model. Top-tier luxury and breathtaking V8 performance.</p>
-            <div class="card-actions">
-              <a class="small-btn" href="m8-coupe-details.html">Details</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="inventory-card">
-          <img src="https://www.bmw.in/content/dam/bmw/common/all-models/m-series/xm/2022/Highlights/bmw-x-series-xm-phev-mc-electric-driving-hero-desktop.jpg.asset.1661934105350.jpg" alt="BMW XM SUV" />
-          <div class="inventory-info">
-            <h3>BMW XM (PHEV)</h3>
-            <p class="price">₹2.60 Crore*</p>
-            <p class="desc">A revolutionary high-performance hybrid SUV from the M division. Electrified power.</p>
-            <div class="card-actions">
-              <a class="small-btn" href="xm-phev-details.html">Details</a>
-            </div>
-          </div>
-        </div>
-
+      <div class="footer-contact-item">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.6 3.53a2 2 0 0 1 1.94-2.1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6 6l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <a href="tel:+919876543210">+91 98765 43210</a>
       </div>
-      <p style="text-align: center; font-size: 0.85rem; color: #aaa; margin-top: 30px;">*Prices listed are ex-showroom (indicative) and subject to change based on location and options.</p>
-    </section>
-  </main>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 BMW M-Series Unofficial Showcase. All vehicle names and trademarks belong to BMW AG.</p>
+    <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Disclaimer</a></div>
+  </div>
+</footer>
 
-  <section id="about" class="about">
-    <h2>About the M Division</h2>
-    <p>
-      The BMW M GmbH (formerly BMW Motorsport GmbH) is a subsidiary of BMW AG that was founded in 1972 to facilitate BMW's racing program. Over time, it transitioned to producing high-performance versions of various BMW models. The <strong>M</strong> stands for <strong>Motorsport</strong>, signifying the division's commitment to precision engineering, superior handling, and powerful engines. Every vehicle bearing the M badge is rigorously tested on the world's most demanding circuits, including the Nürburgring Nordschleife, to ensure it delivers a truly exhilarating and competitive driving experience.
-    </p>
-  </section>
+<script>
+(() => {
+  'use strict';
 
-  <footer id="contact">
-    <p>Contact the M Specialist Team: <a href="mailto:info@bmw-m.com">info@bmw-m.com</a> | Inquiries: +91 98765 43210</p>
-    <p>© 2025 BMW M-Series Unofficial Showcase. All rights reserved.</p>
-  </footer>
+  window.addEventListener('load', () => {
+    const loader = document.getElementById('page-loader');
+    setTimeout(() => {
+      loader.classList.add('out');
+      loader.addEventListener('transitionend', () => loader.remove(), { once: true });
+    }, 1200);
+  });
+
+  const Toast = {
+    container: document.getElementById('toast-container'),
+    icons: { success:'✓', info:'i', error:'✕', warning:'!' },
+    show(msg, type='success', dur=3500) {
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.innerHTML = `<span style="font-family:var(--ff-cond);font-size:.85rem;font-weight:700;opacity:.8;flex-shrink:0">${this.icons[type]}</span><span>${msg}</span>`;
+      this.container.appendChild(t);
+      const rm = () => { t.classList.add('out'); t.addEventListener('animationend', ()=>t.remove(),{once:true}); };
+      const timer = setTimeout(rm, dur);
+      t.addEventListener('click', () => { clearTimeout(timer); rm(); });
+    }
+  };
+
+  window.smoothScrollTo = sel => {
+    const target = document.querySelector(sel);
+    if(target) { const y = target.getBoundingClientRect().top + window.scrollY - 80; window.scrollTo({top: y, behavior: 'smooth'}); }
+  };
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const h = a.getAttribute('href');
+      if (h.length > 1 && document.querySelector(h)) { e.preventDefault(); smoothScrollTo(h); }
+    });
+  });
+
+  const header = document.getElementById('main-header');
+  const btt = document.getElementById('back-to-top');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('shrunk', scrollY > 80);
+    btt.classList.toggle('visible', scrollY > 500);
+  }, { passive:true });
+  btt.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+
+  const hamburger = document.getElementById('hamburger');
+  const mainNav = document.getElementById('main-nav');
+  hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mainNav.classList.toggle('open'); });
+  mainNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { hamburger.classList.remove('open'); mainNav.classList.remove('open'); }));
+
+  const revObs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('visible'); revObs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+  const sections = document.querySelectorAll('section[id], footer[id]');
+  const navLinks = document.querySelectorAll('nav.main-nav a');
+  const navObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        document.querySelector(`nav.main-nav a[href="#${e.target.id}"]`)?.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => navObs.observe(s));
+
+  const WISH_KEY = 'bmwmx_wishlist';
+  const Wishlist = {
+    list: [],
+    load() { try { this.list = JSON.parse(localStorage.getItem(WISH_KEY)) || []; } catch { this.list = []; } },
+    save() { localStorage.setItem(WISH_KEY, JSON.stringify(this.list)); },
+    has(name) { return this.list.some(i => i.name === name); },
+    add(name, price, priceLabel) {
+      if (this.has(name)) { Toast.show(`Already in Garage.`, 'info'); return false; }
+      this.list.push({ name, price, priceLabel });
+      this.save(); Toast.show(`${name} added to garage`, 'success');
+      this.render(); this.updateBadge(); this.syncGrid(); return true;
+    },
+    remove(name) {
+      this.list = this.list.filter(i => i.name !== name);
+      this.save(); Toast.show('Removed from garage.', 'info');
+      this.render(); this.updateBadge(); this.syncGrid();
+    },
+    clear() {
+      this.list = []; this.save();
+      this.render(); this.updateBadge(); this.syncGrid();
+      Toast.show('Garage cleared.', 'warning');
+    },
+    updateBadge() {
+      const b = document.getElementById('wish-count');
+      b.textContent = this.list.length;
+      b.classList.toggle('show', this.list.length > 0);
+    },
+    syncGrid() {
+      document.querySelectorAll('.inventory-card').forEach(card => {
+        const name = card.dataset.name;
+        const btn = card.querySelector('.wish-fab');
+        if(btn) { if(this.has(name)) btn.classList.add('wished'); else btn.classList.remove('wished'); }
+      });
+    },
+    render() {
+      const container = document.getElementById('wish-list-container');
+      const empty = document.getElementById('wish-empty');
+      const totalBox = document.getElementById('wish-total');
+      const totalVal = document.getElementById('wish-total-value');
+      container.innerHTML = '';
+      if (!this.list.length) { empty.style.display='block'; totalBox.style.display='none'; return; }
+      empty.style.display = 'none'; totalBox.style.display = 'block';
+      let total = 0;
+      this.list.forEach(item => {
+        total += item.price;
+        const div = document.createElement('div');
+        div.className = 'wish-item';
+        div.innerHTML = `<div><div class="wish-item-name">${item.name}</div><div class="wish-item-price">${item.priceLabel}</div></div><button class="wish-item-remove" data-name="${item.name}">✕</button>`;
+        container.appendChild(div);
+      });
+      totalVal.textContent = `₹${(total/10000000).toFixed(2)} Crore`;
+      container.querySelectorAll('.wish-item-remove').forEach(btn =>
+        btn.addEventListener('click', () => Wishlist.remove(btn.dataset.name)));
+    }
+  };
+  Wishlist.load(); Wishlist.render(); Wishlist.updateBadge();
+
+  window.toggleWish = function(e, btn, name, price, priceLabel) {
+    e.stopPropagation();
+    if (Wishlist.has(name)) { Wishlist.remove(name); } else { Wishlist.add(name, price, priceLabel); }
+  };
+
+  const wishOverlay = document.getElementById('wish-overlay');
+  const wishDrawer  = document.getElementById('wish-drawer');
+  const openWish  = () => { wishOverlay.classList.add('open'); wishDrawer.classList.add('open'); document.body.style.overflow='hidden'; };
+  const closeWish = () => { wishOverlay.classList.remove('open'); wishDrawer.classList.remove('open'); document.body.style.overflow=''; };
+  document.getElementById('wish-btn').addEventListener('click', openWish);
+  document.getElementById('wish-drawer-close').addEventListener('click', closeWish);
+  wishOverlay.addEventListener('click', closeWish);
+  document.getElementById('wish-clear-btn').addEventListener('click', () => { if (confirm('Clear your garage?')) Wishlist.clear(); });
+
+  const detailOverlay = document.getElementById('detail-overlay');
+  document.querySelectorAll('.detail-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.detail-pane').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`pane-${tab.dataset.tab}`).classList.add('active');
+    });
+  });
+  const closeDetail = () => { detailOverlay.classList.remove('open'); document.body.style.overflow=''; };
+  document.getElementById('detail-close').addEventListener('click', closeDetail);
+  detailOverlay.addEventListener('click', e => { if (e.target === detailOverlay) closeDetail(); });
+
+  const loginPage = document.getElementById('login-page');
+  const openLogin  = () => { loginPage.classList.add('open'); document.body.style.overflow='hidden'; };
+  const closeLogin = () => { loginPage.classList.remove('open'); document.body.style.overflow=''; };
+  document.getElementById('login-nav-btn').addEventListener('click', openLogin);
+  document.getElementById('login-close-btn').addEventListener('click', closeLogin);
+  loginPage.addEventListener('click', e => { if (e.target === loginPage) closeLogin(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDetail(); closeWish(); closeLogin(); } });
+
+  document.getElementById('login-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const u = document.getElementById('login-user'), p = document.getElementById('login-pass');
+    let valid = true;
+    if (!u.value.trim()) { u.classList.add('error'); document.getElementById('err-user').classList.add('show'); valid=false; }
+    else { u.classList.remove('error'); document.getElementById('err-user').classList.remove('show'); }
+    if (p.value.length < 6) { p.classList.add('error'); document.getElementById('err-pass').classList.add('show'); valid=false; }
+    else { p.classList.remove('error'); document.getElementById('err-pass').classList.remove('show'); }
+    if (!valid) return;
+    const btn = document.getElementById('login-submit-btn'), txt = document.getElementById('login-btn-text'), spin = document.getElementById('login-spinner');
+    btn.disabled=true; txt.style.display='none'; spin.style.display='block';
+    setTimeout(() => { spin.style.display='none'; txt.style.display='block'; btn.disabled=false; closeLogin(); Toast.show(`Welcome, ${u.value}! 🏎`, 'success', 4000); document.getElementById('login-form').reset(); }, 1500);
+  });
+  document.getElementById('forgot-link').addEventListener('click', e => { e.preventDefault(); Toast.show('Reset link sent to your email.', 'info'); });
+  document.getElementById('signup-link').addEventListener('click', e => { e.preventDefault(); Toast.show('Sign-up coming soon!', 'warning'); });
+
+  const searchInput = document.getElementById('search-input');
+  const sortSelect  = document.getElementById('sort-select');
+  const inventoryList = document.getElementById('inventory-list');
+  const noResults = document.getElementById('no-results');
+  const visibleCount = document.getElementById('visible-count');
+
+  const filterAndSort = () => {
+    const q = searchInput.value.trim().toLowerCase();
+    const sort = sortSelect.value;
+    const cards = [...document.querySelectorAll('.inventory-card')];
+    let visibleIndex = 0;
+    let visible = cards.filter(c => {
+      const match = !q || c.dataset.name.toLowerCase().includes(q);
+      c.classList.toggle('hidden', !match);
+      if(match) { c.style.animationDelay = `${visibleIndex * 0.08}s`; visibleIndex++; }
+      return match;
+    });
+    visible.sort((a,b) => {
+      const ap=parseInt(a.dataset.price), bp=parseInt(b.dataset.price);
+      if(sort==='price-asc') return ap-bp;
+      if(sort==='price-desc') return bp-ap;
+      if(sort==='name-asc') return a.dataset.name.localeCompare(b.dataset.name);
+      return 0;
+    });
+    visible.forEach(c => inventoryList.appendChild(c));
+    noResults.style.display = visible.length === 0 ? 'block' : 'none';
+    if (visibleCount) visibleCount.textContent = visible.length;
+    visible.forEach(c => { c.classList.remove('visible'); void c.offsetWidth; c.classList.add('visible'); });
+  };
+
+  searchInput.addEventListener('input', filterAndSort);
+  sortSelect.addEventListener('change', filterAndSort);
+
+  const M_CARS = [
+    { name: "BMW M2 Coupe G87", price: 10300000, priceLabel: "₹1.03 Crore*", badge: "RWD", filter: "rwd", hp: 460, perfPct: 70, perfColor: "gold", tag: "G87 · 2024", img: "https://bmw.scene7.com/is/image/BMW/g80_stage_dsk_fb?qlt=80&wid=1024&fmt=webp", desc: "Compact M power. Built for the purist driving experience.", specs: {"Engine":"S58 TwinPower Turbo I6","Horsepower":"460 HP","0–100 km/h":"~4.1s","Drivetrain":"RWD","Transmission":"6-Speed Manual / Auto","Body":"Coupe"} },
+    { name: "BMW M3 Competition Sedan", price: 14700000, priceLabel: "₹1.47 Crore*", badge: "xDrive", filter: "awd", hp: 510, perfPct: 78, perfColor: "gold", tag: "G80 · 2024", img: "https://bmw.scene7.com/is/image/BMW/g82_stage_dsk_fb?qlt=80&wid=1024&fmt=webp", desc: "Racetrack performance with luxurious daily practicality.", specs: {"Engine":"S58 TwinPower Turbo I6","Horsepower":"510 HP","0–100 km/h":"~3.5s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"Sedan"} },
+    { name: "BMW M4 Competition Coupe", price: 15200000, priceLabel: "₹1.52 Crore*", badge: "xDrive", filter: "awd", hp: 510, perfPct: 78, perfColor: "gold", tag: "G82 · 2024", img: "https://imgd.aeplcdn.com/1920x1080/n/cw/ec/176129/m4-competition-exterior-left-front-three-quarter.jpeg?isig=0&q=80&q=80", desc: "Aggressive styling with the twin-turbo S58 powerplant.", specs: {"Engine":"S58 TwinPower Turbo I6","Horsepower":"510 HP","0–100 km/h":"~3.5s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"Coupe"} },
+    { name: "BMW M5 Sedan", price: 20100000, priceLabel: "₹2.01 Crore*", badge: "V8", filter: "v8", hp: 600, perfPct: 92, perfColor: "gold", tag: "F90 · 2024", img: "https://bmw.scene7.com/is/image/BMW/g90_driving-dynamics_fb?qlt=80&wid=1024&fmt=webp", desc: "Exceptional V8 power with refined executive comfort.", specs: {"Engine":"TwinPower Turbo V8","Horsepower":"600 HP+","0–100 km/h":"<3.3s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"Sedan"} },
+    { name: "BMW M8 Competition Coupe", price: 24400000, priceLabel: "₹2.44 Crore*", badge: "Flagship", filter: "v8", hp: 625, perfPct: 96, perfColor: "gold", tag: "F92 · 2023", img: "https://bmw.scene7.com/is/image/BMW/m8-kv-v1:16to7?fmt=webp&wid=2560&hei=1120", desc: "Top-tier luxury meets breathtaking V8 performance.", specs: {"Engine":"4.4L TwinPower V8","Horsepower":"625 HP","0–100 km/h":"~3.2s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"Coupe GT"} },
+    { name: "BMW XM PHEV", price: 26000000, priceLabel: "₹2.60 Crore*", badge: "PHEV", filter: "phev", hp: 653, perfPct: 100, perfColor: "phev", tag: "G09 · 2024", img: "https://www.bmw.in/content/dam/bmw/common/all-models/m-series/xm/2022/Highlights/bmw-x-series-xm-phev-mc-electric-driving-hero-desktop.jpg.asset.1661934105350.jpg", desc: "Revolutionary electrified performance. The future of M.", specs: {"Engine":"TwinPower V8 + Electric","Horsepower":"653 HP","0–100 km/h":"~4.3s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"SAV"} },
+    { name: "BMW M3 Touring G81", price: 15500000, priceLabel: "₹1.55 Crore*", badge: "Touring", filter: "awd", hp: 510, perfPct: 78, perfColor: "gold", tag: "G81 · 2024", img: "https://i.ytimg.com/vi/qY_3m_I_TCI/maxresdefault.jpg", desc: "The world's first AWD M performance wagon.", specs: {"Engine":"S58 TwinPower Turbo I6","Horsepower":"510 HP","0–100 km/h":"~3.6s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"Estate Wagon"} },
+    { name: "BMW M4 CSL", price: 21000000, priceLabel: "₹2.10 Crore*", badge: "CSL", filter: "cs", hp: 543, perfPct: 83, perfColor: "gold", tag: "G82 CSL · 1000 Units", img: "https://i.pinimg.com/736x/67/14/08/671408018e6e58f278d6540c4992524a.jpg", desc: "543 HP. No rear seats. Pure track weapon.", specs: {"Engine":"S58 TwinPower Turbo I6","Horsepower":"543 HP","0–100 km/h":"~3.7s","Drivetrain":"RWD","Transmission":"8-Speed M Steptronic","Body":"Lightweight Coupe"} },
+    { name: "BMW M4 Convertible G83", price: 16800000, priceLabel: "₹1.68 Crore*", badge: "Cabrio", filter: "awd", hp: 510, perfPct: 78, perfColor: "gold", tag: "G83 · 2024", img: "https://bmw.scene7.com/is/image/BMW/g83_co_usp_4_co_fb?qlt=80&wid=1024&fmt=webp", desc: "Open-air perfection. 510 HP with the sky as your roof.", specs: {"Engine":"S58 TwinPower Turbo I6","Horsepower":"510 HP","0–100 km/h":"~3.7s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"Convertible"} },
+    { name: "BMW M5 CS F90", price: 28000000, priceLabel: "₹2.80 Crore*", badge: "CS", filter: "cs", hp: 635, perfPct: 97, perfColor: "gold", tag: "F90 CS · Extreme", img: "https://www.autocar.co.uk/sites/autocar.co.uk/files/bmw-m5-cs-launch_0.jpg", desc: "635 HP. 70 kg lighter. The most extreme M5.", specs: {"Engine":"4.4L Competition V8","Horsepower":"635 HP","0–100 km/h":"~3.0s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"Sedan"} },
+    { name: "BMW X3 M Competition", price: 10600000, priceLabel: "₹1.06 Crore*", badge: "SUV", filter: "suv", hp: 510, perfPct: 78, perfColor: "gold", tag: "F97 · 2024", img: "https://images.livemint.com/img/2021/10/21/original/BMWX3MCompetition-4_1634812328151.jpg", desc: "Compact performance SUV with the firepower of an M car.", specs: {"Engine":"S58 TwinPower Turbo I6","Horsepower":"510 HP","0–100 km/h":"~3.8s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"SAV"} },
+    { name: "BMW X4 M Competition", price: 11200000, priceLabel: "₹1.12 Crore*", badge: "SUV", filter: "suv", hp: 510, perfPct: 78, perfColor: "gold", tag: "F98 · 2024", img: "https://www.topgear.com/sites/default/files/images/cars-road-test/2019/07/3516cc100414995a975cc84eb53503a4/bmw_x4m_d_003.jpg", desc: "SUV Coupe silhouette with full M Competition fury.", specs: {"Engine":"S58 TwinPower Turbo I6","Horsepower":"510 HP","0–100 km/h":"~3.8s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"SAC"} },
+    { name: "BMW X5 M Competition", price: 18500000, priceLabel: "₹1.85 Crore*", badge: "V8 SUV", filter: "suv", hp: 617, perfPct: 94, perfColor: "gold", tag: "F95 · 2024", img: "https://sc-events.bmw.com/x-m-range-kv-v1-fb?qlt=80&wid=1024&fmt=webp", desc: "617 HP V8 in a full-size luxury SAV. Devastatingly quick.", specs: {"Engine":"4.4L TwinPower V8","Horsepower":"617 HP","0–100 km/h":"~3.8s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"SAV"} },
+    { name: "BMW X6 M Competition", price: 20500000, priceLabel: "₹2.05 Crore*", badge: "V8 SAC", filter: "suv", hp: 617, perfPct: 94, perfColor: "gold", tag: "F96 · 2024", img: "https://bmw.scene7.com/is/image/BMW/g06_lci_fb-2?qlt=80&wid=1024&fmt=webp", desc: "Fastback coupe drama with 617 HP V8 devastation.", specs: {"Engine":"4.4L TwinPower V8","Horsepower":"617 HP","0–100 km/h":"~3.8s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"SAC"} },
+    { name: "BMW M8 Gran Coupe", price: 27000000, priceLabel: "₹2.70 Crore*", badge: "4-Door GT", filter: "v8", hp: 625, perfPct: 96, perfColor: "gold", tag: "F93 · 2024", img: "https://car-images.carwow.co.uk/blog/BMW-M8-Gran-Coupe-007.jpg", desc: "Four-door grand touring fury. Supercar speed.", specs: {"Engine":"4.4L TwinPower V8","Horsepower":"625 HP","0–100 km/h":"~3.2s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"4-Door GT"} },
+    { name: "BMW M3 CS G80", price: 22000000, priceLabel: "₹2.20 Crore*", badge: "CS", filter: "cs", hp: 543, perfPct: 83, perfColor: "gold", tag: "G80 CS · 1,300 Units", img: "https://imgd.aeplcdn.com/1280x720/n/cw/ec/141011/m3-cs-exterior-front-view-3.jpeg?isig=0", desc: "543 HP, full carbon aero, 1,300 units ever made.", specs: {"Engine":"S58 TwinPower Turbo I6","Horsepower":"543 HP","0–100 km/h":"~3.4s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"Sedan"} },
+    { name: "BMW M2 Competition F87", price: 7200000, priceLabel: "₹72 Lakh*", badge: "Classic", filter: "rwd", hp: 410, perfPct: 65, perfColor: "gold", tag: "F87 · Collector Edition", img: "https://i.ytimg.com/vi/bY6K7eX7kCI/maxresdefault.jpg", desc: "The S55 engine legend. Now a collector's icon.", specs: {"Engine":"S55 TwinPower Turbo I6","Horsepower":"410 HP","0–100 km/h":"~4.2s (Manual)","Drivetrain":"RWD","Transmission":"6-Speed Manual / DCT","Body":"Coupe"} },
+    { name: "BMW XM Label Red", price: 32000000, priceLabel: "₹3.20 Crore*", badge: "Label Red", filter: "phev", hp: 748, perfPct: 100, perfColor: "phev", tag: "G09 · 500 Units", img: "https://sc-events.bmw.com/g09-labeled-kv-v2?qlt=80&wid=1024&fmt=webp", desc: "The most powerful BMW ever built. 748 HP. Only 500 made.", specs: {"Engine":"TwinPower V8 + Electric","Horsepower":"748 HP","0–100 km/h":"~3.8s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"SAV"} },
+    { name: "BMW iX M60", price: 18200000, priceLabel: "₹1.82 Crore*", badge: "100% EV", filter: "ev", hp: 619, perfPct: 94, perfColor: "ev", tag: "I20 · Full Electric", img: "https://www.autocar.co.uk/sites/autocar.co.uk/files/images/car-reviews/first-drives/legacy/99-bmw-ix-m60-track-driving.jpg", desc: "619 HP electric AWD SAV. Zero emissions, zero compromise.", specs: {"Engine":"Dual-Motor Electric AWD","Horsepower":"619 HP","0–100 km/h":"~3.8s","Range":"~560 km","Battery":"111.5 kWh","Body":"EV SAV"} },
+    { name: "BMW M5 Touring G61", price: 29000000, priceLabel: "₹2.90 Crore*", badge: "Hybrid", filter: "v8", hp: 727, perfPct: 98, perfColor: "gold", tag: "G61 · 2025 · Hybrid", img: "https://imgd-ct.aeplcdn.com/1056x594/n/cw/ec/172153/bmw-m5-touring-exterior-front-view.jpeg?isig=0&q=80", desc: "727 HP hybrid estate. The fastest wagon.", specs: {"Engine":"4.4L V8 + Electric (PHEV)","Horsepower":"727 HP","0–100 km/h":"~3.5s","Drivetrain":"M xDrive AWD","Transmission":"8-Speed M Steptronic","Body":"Estate"} }
+  ];
+
+  /* ── CARD BUILDER — No hover pill, no image click zone ── */
+  function buildCardHTML(car, index) {
+    let btnSound = car.hp > 600
+      ? `<button class="exhaust-btn" onclick="playMockExhaust(this); event.stopPropagation();">Listen <div class="wave-icon"><i></i><i></i><i></i><i></i></div></button>`
+      : '';
+    const specTokens = Object.values(car.specs).slice(0, 3).map(s => `<span class="spec-chip">${s}</span>`).join('');
+    const delay = index * 0.08;
+    const isWished = Wishlist.has(car.name) ? 'wished' : '';
+
+    return `
+      <div class="inventory-card" style="animation-delay: ${delay}s"
+        data-name="${car.name}" data-price="${car.price}" data-price-label="${car.priceLabel}" data-badge="${car.badge}" data-f="${car.filter}" data-hp="${car.hp}" data-img="${car.img}" data-desc="${car.desc.replace(/"/g, '&quot;')}" data-specs='${JSON.stringify(car.specs).replace(/'/g, '&#39;')}'>
+
+        <div class="card-img-wrap">
+          <svg class="perf-ring" viewBox="0 0 40 40" style="--dashoffset: ${113 - (113 * car.perfPct / 100)}">
+            <circle class="track" cx="20" cy="20" r="18" />
+            <circle class="fill ${car.perfColor}" cx="20" cy="20" r="18" />
+            <text x="20" y="20">${car.perfPct}</text>
+          </svg>
+
+          <button class="wish-fab ${isWished}" title="Add to Garage"
+            onclick="toggleWish(event, this, '${car.name}', ${car.price}, '${car.priceLabel}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+
+          <img src="${car.img}" alt="${car.name}" loading="lazy">
+          <span class="card-badge ${car.badge === 'PHEV' || car.badge === 'Label Red' ? 'phev-badge' : ''}">${car.badge}</span>
+          ${btnSound}
+        </div>
+
+        <div class="inventory-info">
+          <p class="card-model-tag">${car.tag}</p>
+          <h3>${car.name}</h3>
+          <p class="desc">${car.desc}</p>
+          <div class="card-specs-row">${specTokens}</div>
+
+          <div class="card-footer">
+            <div class="card-price">${car.priceLabel}</div>
+            <button class="card-details-btn details-btn" aria-label="View Details">
+              View Details
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /* Spotlight */
+  let slActive = 0;
+  const slCars = [M_CARS[17], M_CARS[4], M_CARS[9], M_CARS[19]];
+  let slInterval;
+
+  function renderSpotlight() {
+    const c = slCars[slActive];
+    if(!c) return;
+    document.getElementById('sl-bg').style.backgroundImage = `url("${c.img}")`;
+    const imgEl = document.getElementById('sl-img');
+    imgEl.classList.remove('in');
+    setTimeout(() => { imgEl.src = c.img; imgEl.classList.add('in'); }, 50);
+    document.getElementById('sl-name').innerText = c.name;
+    document.getElementById('sl-hp').innerHTML = `${c.hp} <span>HP</span>`;
+    document.getElementById('sl-badge').innerText = c.badge;
+    document.getElementById('sl-price').innerText = c.priceLabel;
+    document.getElementById('sl-s1').innerText = c.specs["0–100 km/h"];
+    document.getElementById('sl-s2').innerText = c.specs["Body"];
+    const dotsContainer = document.getElementById('sl-dots');
+    if (dotsContainer.children.length === 0) {
+      slCars.forEach((_, i) => {
+        let d = document.createElement('div');
+        d.className = 'sl-dot';
+        d.onclick = () => { slActive = i; resetSL(); renderSpotlight(); };
+        dotsContainer.appendChild(d);
+      });
+    }
+    Array.from(dotsContainer.children).forEach((d, i) => d.className = (i===slActive)?'sl-dot on':'sl-dot');
+    const prog = document.getElementById('sl-prog');
+    prog.style.width = '0%';
+    setTimeout(() => prog.style.width = '100%', 100);
+  }
+
+  function nextSL() { slActive = (slActive+1)%slCars.length; renderSpotlight(); }
+  function prevSL() { slActive = (slActive>0 ? slActive : slCars.length)-1; renderSpotlight(); }
+  function resetSL() { clearInterval(slInterval); slInterval = setInterval(nextSL, 8000); }
+
+  window.playMockExhaust = function(btn) {
+    if (btn.classList.contains('playing')) return;
+    btn.classList.add('playing');
+    btn.innerHTML = 'Roaring... <div class="wave-icon"><i></i><i></i><i></i><i></i></div>';
+    setTimeout(() => { btn.classList.remove('playing'); btn.innerHTML = 'Listen <div class="wave-icon"><i></i><i></i><i></i><i></i></div>'; }, 3000);
+  };
+
+  /* Finder */
+  let fAnswers = {};
+  window.selectQA = function(step, val) {
+    fAnswers[step] = val;
+    document.getElementById('fstep-'+step).classList.remove('active');
+    if(step<2) { document.getElementById('fstep-'+(step+1)).classList.add('active'); }
+    else { showFinderResult(); }
+  };
+  function showFinderResult() {
+    document.getElementById('fstep-res').classList.add('active');
+    let match = M_CARS[0];
+    if(fAnswers[2]==='ev') match = M_CARS[18];
+    else if(fAnswers[2]==='hybrid') match = M_CARS[17];
+    else if(fAnswers[1]==='suv') match = M_CARS[12];
+    else if(fAnswers[0]==='track') match = M_CARS[15];
+    else if(fAnswers[1]==='sedan') match = M_CARS[3];
+    else match = M_CARS[2];
+    document.getElementById('fresult-content').innerHTML = `
+      <img class="fresult-img" src="${match.img}" alt="">
+      <div class="fresult-info">
+        <h3>${match.name}</h3>
+        <div class="fresult-hp">${match.hp} HP</div>
+        <p class="fresult-why">Based on your driving style and preferences, the ${match.name} is the ultimate choice.</p>
+        <button class="fstep-reset" onclick="resetFinder()">Start Over</button>
+      </div>
+    `;
+  }
+  window.resetFinder = function() {
+    document.getElementById('fstep-res').classList.remove('active');
+    document.getElementById('fstep-0').classList.add('active');
+    fAnswers = {};
+  };
+
+  /* Open detail modal — shared function */
+  function openDetailFromData(cardData) {
+    document.getElementById('detail-img').src = cardData.img;
+    document.getElementById('detail-img').alt = cardData.name;
+    document.getElementById('detail-name').textContent  = cardData.name;
+    document.getElementById('detail-price').textContent = cardData.priceLabel;
+    document.getElementById('detail-desc').textContent  = cardData.desc;
+
+    const badgeEl = document.getElementById('detail-img-badge');
+    const isPhev = cardData.badge === 'PHEV' || cardData.badge === 'Label Red';
+    badgeEl.innerHTML = `<span class="card-badge${isPhev?' phev-badge':''}">${cardData.badge}</span>`;
+
+    const grid = document.getElementById('detail-specs');
+    grid.innerHTML = '';
+    Object.entries(cardData.specs).forEach(([k,v]) => {
+      const d = document.createElement('div');
+      d.className = 'spec-row';
+      d.innerHTML = `<span class="spec-label">${k}</span><span class="spec-val">${v}</span>`;
+      grid.appendChild(d);
+    });
+
+    // Reset tabs to overview
+    document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.detail-pane').forEach(p => p.classList.remove('active'));
+    document.querySelector('.detail-tab[data-tab="overview"]').classList.add('active');
+    document.getElementById('pane-overview').classList.add('active');
+
+    const modalWishBtn = document.getElementById('detail-wish-btn');
+    modalWishBtn.textContent = Wishlist.has(cardData.name) ? '✓ In Garage' : '❤ Add to Garage';
+    modalWishBtn.onclick = () => {
+      if (!Wishlist.has(cardData.name)) {
+        Wishlist.add(cardData.name, cardData.price, cardData.priceLabel);
+        modalWishBtn.textContent = '✓ In Garage';
+      } else {
+        Wishlist.remove(cardData.name);
+        modalWishBtn.textContent = '❤ Add to Garage';
+      }
+    };
+
+    document.getElementById('detail-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function initAdvancedUI() {
+    const igrid = document.getElementById('inventory-list');
+    igrid.innerHTML = M_CARS.map((car, index) => buildCardHTML(car, index)).join('');
+
+    document.querySelectorAll('.inventory-card').forEach(el => revObs.observe(el));
+
+    /* Only the "View Details" button triggers the modal */
+    document.querySelectorAll('.details-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const card = btn.closest('.inventory-card');
+        const cardData = {
+          name:       card.dataset.name,
+          price:      parseInt(card.dataset.price),
+          priceLabel: card.dataset.priceLabel,
+          badge:      card.dataset.badge,
+          img:        card.dataset.img,
+          desc:       card.dataset.desc,
+          specs:      JSON.parse(card.dataset.specs)
+        };
+        openDetailFromData(cardData);
+      });
+    });
+
+    renderSpotlight();
+    slInterval = setInterval(nextSL, 8000);
+    document.getElementById('sl-next').onclick = () => { nextSL(); resetSL(); };
+    document.getElementById('sl-prev').onclick = () => { prevSL(); resetSL(); };
+  }
+
+  setTimeout(initAdvancedUI, 100);
+
+})();
+</script>
 </body>
 </html>
